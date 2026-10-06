@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict';
+import {defaultCatalog,validateCatalog,upgradeStoredCatalog,applyCatalog} from '../src/admin/catalog';
+import {clientCatalog} from '../src/admin/clientCatalog';
+import {estimateQuote} from '../server/quoteEngine';
+import {calculateQuote} from '../src/utils/calculator';
+import {pruneDishes} from '../src/utils/dishes';
+import {receiptText} from '../src/utils/receipt';
+const catalog=clientCatalog(defaultCatalog());validateCatalog(catalog);
+assert.equal(catalog.packages.length,4);assert.equal(catalog.extras.length,0);
+const original=defaultCatalog();const legacy=structuredClone(original) as any;delete legacy.schemaVersion;delete legacy.service;
+assert.equal(upgradeStoredCatalog(legacy).schemaVersion,2);
+const input={eventType:'cena_privada' as const,eventDate:'2099-06-15',zoneId:catalog.zones[0].id,packageId:'desayunos',guestsCount:5,selectedExtras:{},selectedDishes:{desayuno:'omelette'}};
+const result=estimateQuote(catalog,input);
+assert.equal(result.breakdown.menuSubtotalCents,475000);assert.equal(result.breakdown.taxPending,true);assert.equal(result.breakdown.travelRequiresConfirmation,true);assert.equal(result.demo,false);
+assert.throws(()=>estimateQuote(catalog,{...input,selectedDishes:{}}));
+assert.throws(()=>estimateQuote(catalog,{...input,selectedDishes:{desayuno:'chilaquiles'}}));
+assert.throws(()=>estimateQuote(catalog,{...input,selectedDishes:{desayuno:'omelette',salsa:'verde'}}));
+const chilaquiles=estimateQuote(catalog,{...input,selectedDishes:{desayuno:'chilaquiles',salsa:'verde',proteina:'pollo'}});
+assert.equal(chilaquiles.breakdown.dishSummary?.length,3);
+assert.deepEqual(pruneDishes(catalog.packages[0],{desayuno:'omelette',salsa:'roja'}),{desayuno:'omelette'});
+const dinner=estimateQuote(catalog,{...input,packageId:'cena-dos',selectedDishes:{entrada:'almejas',fuerte:'pescado'}});
+assert.equal(dinner.breakdown.pricePending,true);assert.equal(dinner.breakdown.totalEstimatedCents,0);assert.equal(dinner.estimateStatus,'partial');
+// Synthetic approved settings only; not the client's unconfirmed tax policy.
+const approved=structuredClone(catalog);approved.service.taxApproved=true;approved.service.taxRateBps=1600;
+approved.service.taxOnTravel=true;approved.service.travelMode='blocks';approved.service.travelApproved=true;approved.zones[0].requiresConfirmation=false;
+for(const [guests,blocks] of [[19,1],[20,1],[21,2]]) {
+  const quote=estimateQuote(approved,{...input,guestsCount:guests});
+  assert.equal(quote.breakdown.travelFeeCents,500000*blocks);
+  assert.equal(quote.breakdown.taxCents,Math.round((guests*95000+500000*blocks)*0.16));
+  assert.equal(quote.estimateStatus,'estimated');
+}
+approved.packages[0].pricePerPersonCents=101;
+assert.equal(estimateQuote(approved,{...input,guestsCount:1}).breakdown.taxCents,80016);
+assert.notEqual(estimateQuote(approved,input).version,result.version);
+applyCatalog(catalog);
+const preview=calculateQuote({...input,clientName:'Prueba',dietaryRestrictions:'',additionalNotes:''});
+assert.equal(preview.totalEstimatedCents,result.breakdown.totalEstimatedCents);assert.equal(preview.taxPending,result.breakdown.taxPending);
+const text=receiptText({folio:'CO-TEST',createdAt:'2026-10-03',estimate:chilaquiles,contact:{name:'Prueba',phone:'0000000000',dietaryRestrictions:'',additionalNotes:'Prueba sintética'}});
+assert.match(text,/Chilaquiles/);assert.match(text,/Verde/);assert.match(text,/CO-TEST/);assert.match(text,/no reserva/);
+const extra=structuredClone(catalog);extra.packages.push({...structuredClone(extra.packages[0]),id:'nuevo'});validateCatalog(extra);
+extra.packages[0].choiceGroups![0].options.push({...extra.packages[0].choiceGroups![0].options[0]});assert.throws(()=>validateCatalog(extra));
+console.log('OK: catálogo dinámico, importación del cliente, variantes, importes pendientes, impuestos sintéticos, bloques 19/20/21, versiones y recibo.');

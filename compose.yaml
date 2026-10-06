@@ -1,0 +1,21 @@
+name: restauran-local
+services:
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3307:3306"
+    environment:
+      MARIADB_DATABASE: restauran
+      MARIADB_USER: restauran_app
+      MARIADB_PASSWORD: ${DB_PASSWORD:?Run npm run local:prepare first}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Run npm run local:prepare first}
+    volumes:
+      - restaurant_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  restaurant_data:

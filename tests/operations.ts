@@ -1,0 +1,45 @@
+import assert from 'node:assert/strict';
+import type {Pool} from 'mysql2/promise';
+import {blankEvent} from '../src/types/operations';
+import {validateEvent} from '../server/operations';
+type Request=(route:string,body?:unknown,cookie?:string,origin?:string)=>Promise<Response>;
+export async function testOperations(pool:Pool,request:Request,admin:string,editor:string){
+  const base={...blankEvent('2099-09-01'),name:'Cliente ficticio',phone:'+52 612 000 0000',status:'hold' as const,holdUntil:'2099-09-02T12:00:00.000Z',internalNotes:'PRIVADO no publicar',address:'DIRECCION PRIVADA'};
+  assert.throws(()=>validateEvent({...base,totalCents:1.5}));assert.throws(()=>validateEvent({...base,date:'2099-02-30'}));
+  assert.throws(()=>validateEvent({...base,status:'confirmed'}));
+  assert.equal((await request('/events?month=2099-09')).status,401);
+  const competing=await Promise.all([request('/events',{data:base,quoteId:null},admin),request('/events',{data:base,quoteId:null},editor)]);
+  assert.deepEqual(competing.map(r=>r.status).sort(),[201,409]);
+  const id=(await competing.find(r=>r.status===201)!.json()).id;
+  const avail=await (await request('/availability?month=2099-09')).json();assert.equal(avail.days['2099-09-01'],'review');assert.ok(!JSON.stringify(avail).includes('Cliente'));
+  let detail=await (await request('/events/'+id,undefined,editor)).json();
+  let proposal={...detail.data,totalCents:100000,depositCents:50000,paymentVerified:true,proposal:'Menú final acordado',publicNotes:'Condiciones acordadas'};
+  assert.equal((await request('/events/'+id,{revision:detail.revision,data:{...proposal,status:'confirmed'},publish:false},editor)).status,400);
+  assert.equal((await request('/events/'+id,{revision:detail.revision,data:proposal,publish:true},editor)).status,200);
+  assert.equal((await request('/events/'+id,{revision:detail.revision,data:proposal,publish:true},admin)).status,409);
+  detail=await (await request('/events/'+id,undefined,editor)).json();
+  let result=await request('/events/'+id+'/link',{revision:detail.revision},editor);assert.equal(result.status,200);const first=(await result.json()).token;
+  const publicView=await (await request('/tracking/read',{token:first})).json();
+  assert.equal(publicView.proposal.proposal,'Menú final acordado');assert.ok(!JSON.stringify(publicView).includes('PRIVADO'));assert.ok(!JSON.stringify(publicView).includes('DIRECCION'));
+  detail=await (await request('/events/'+id,undefined,editor)).json();
+  assert.equal((await request('/events/'+id,{revision:detail.revision,data:{...proposal,status:'confirmed'},publish:false},editor)).status,200);
+  assert.equal((await (await request('/availability?month=2099-09')).json()).days['2099-09-01'],'unavailable');
+  const selection={eventType:'cena_privada',eventDate:'2099-09-01',zoneId:'zona-0',packageId:'desayunos',guestsCount:8,selectedExtras:{},selectedDishes:{desayuno:'omelette'}};
+  const estimate=await (await request('/quotes/estimate',selection)).json();
+  assert.equal((await request('/quotes/submit',{selection,acceptedVersion:estimate.version,consent:true,idempotencyKey:crypto.randomUUID(),contact:{name:'Ensayo de fecha ocupada',phone:'+52 612 000 0000',dietaryRestrictions:'',additionalNotes:''}})).status,409);
+  assert.equal((await (await request('/tracking/read',{token:first})).json()).depositCents,50000);
+  detail=await (await request('/events/'+id,undefined,editor)).json();
+  assert.equal((await request('/events/'+id,{revision:detail.revision,data:{...proposal,status:'confirmed',proposal:'Cambio no publicado'},publish:false},editor)).status,400);
+  result=await request('/events/'+id+'/link',{revision:detail.revision},admin);const second=(await result.json()).token;
+  assert.equal((await request('/tracking/read',{token:first})).status,404);
+  assert.equal((await request('/tracking/read',{token:second})).status,200);
+  const [hashes]=await pool.query<any[]>('SELECT tracking_hash FROM service_events');assert.ok(hashes.every(h=>h.tracking_hash!==second));
+  assert.equal((await request('/events',{data:{...base,date:'2099-09-05'},quoteId:null},editor)).status,201);
+  await pool.query("UPDATE service_events SET hold_until='2000-01-01T00:00:00.000Z' WHERE event_date='2099-09-05'");
+  assert.equal((await (await request('/availability?month=2099-09')).json()).days['2099-09-05'],undefined);
+  assert.equal((await request('/events',{data:{...base,date:'2099-09-05'},quoteId:null},editor)).status,201);
+  // The original quote is immutable; published final proposals have separate versions.
+  const [versions]=await pool.query<any[]>('SELECT document FROM event_proposals WHERE event_id=?',[id]);assert.equal(versions.length,1);
+  const [audits]=await pool.query<any[]>('SELECT COUNT(*) AS total FROM event_activity');assert.ok(audits[0].total>=6);
+  console.log('OK: agenda MariaDB; concurrencia, dinero, publicación, privacidad, enlaces revocables, vencimiento y auditoría.');
+}

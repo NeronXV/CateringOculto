@@ -1,0 +1,173 @@
+.philosophy-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3.5rem;
+  align-items: center;
+}
+
+@media (min-width: 960px) {
+  .philosophy-grid {
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 4.5rem;
+  }
+}
+
+/* Image Stack */
+.philosophy-media-col {
+  position: relative;
+}
+
+.philosophy-image-stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.image-stack-primary {
+  position: relative;
+  width: 90%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-dark-card);
+  border: 1px solid var(--border-dark);
+}
+
+.image-stack-primary .stack-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stack-demo-tag {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+.image-stack-secondary {
+  position: absolute;
+  bottom: -2rem;
+  right: 0;
+  width: 55%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  border: 2px solid var(--bg-dark);
+  display: none;
+}
+
+@media (min-width: 580px) {
+  .image-stack-secondary {
+    display: block;
+  }
+}
+
+.image-stack-secondary .stack-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Narrative */
+.philosophy-text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.philosophy-lead {
+  font-size: 1.12rem;
+  line-height: 1.75;
+  color: var(--text-inverse);
+  margin-bottom: 2rem;
+}
+
+.philosophy-lead strong {
+  color: var(--accent-gold-soft);
+}
+
+.philosophy-pillars {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.pillar-item {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.pillar-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-dark-surface);
+  border: 1px solid var(--border-dark);
+  color: var(--accent-gold-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pillar-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.pillar-title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--text-inverse);
+  margin-bottom: 0.35rem;
+}
+
+.pillar-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-inverse-muted);
+}
+
+/* Chef Team Box */
+.chef-team-box {
+  background-color: var(--bg-dark-surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chef-team-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.chef-team-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-gold-soft);
+  font-weight: 600;
+}
+
+.chef-team-bio {
+  font-size: 0.88rem;
+  color: var(--text-inverse);
+  line-height: 1.55;
+}
+
+.chef-team-bio strong {
+  color: var(--accent-gold-soft);
+}
+
+.chef-team-note {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+  margin-top: 0.25rem;
+}

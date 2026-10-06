@@ -1,0 +1,26 @@
+# Use with infra/compose.yaml; existing platform_proxy must be available.
+# No additional public ports or Caddy instance.
+services:
+  app:
+    image: catering-oculto-app:${RELEASE_TAG:?Set RELEASE_TAG}
+    environment:
+      APP_ENV: production
+      PUBLIC_ORIGIN: https://cateringoculto.bajastack.network
+      TRUST_PROXY: uniquelocal
+    networks:
+      edge:
+        aliases: [catering-oculto-web]
+      database: {}
+  migrate:
+    image: catering-oculto-app:${RELEASE_TAG:?Set RELEASE_TAG}
+networks:
+  edge:
+    external: true
+    name: platform_proxy
+secrets:
+  db_password:
+    file: ${SECRETS_DIRECTORY:?Set SECRETS_DIRECTORY}/db_password
+  db_root_password:
+    file: ${SECRETS_DIRECTORY:?Set SECRETS_DIRECTORY}/db_root_password
+  session_secret:
+    file: ${SECRETS_DIRECTORY:?Set SECRETS_DIRECTORY}/session_secret

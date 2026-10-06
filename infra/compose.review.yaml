@@ -1,0 +1,17 @@
+# Isolated acceptance environment, reachable only through a loopback SSH tunnel.
+services:
+  app:
+    image: catering-oculto-app:${RELEASE_TAG:?Set RELEASE_TAG}
+    ports: ["127.0.0.1:5185:3000"]
+    environment:
+      APP_ENV: local
+      PUBLIC_ORIGIN: http://127.0.0.1:5185
+  migrate:
+    image: catering-oculto-app:${RELEASE_TAG:?Set RELEASE_TAG}
+secrets:
+  db_password:
+    file: ${SECRETS_DIRECTORY:?Set SECRETS_DIRECTORY}/db_password
+  db_root_password:
+    file: ${SECRETS_DIRECTORY:?Set SECRETS_DIRECTORY}/db_root_password
+  session_secret:
+    file: ${SECRETS_DIRECTORY:?Set SECRETS_DIRECTORY}/session_secret

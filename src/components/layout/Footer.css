@@ -1,0 +1,233 @@
+.site-footer {
+  border-top: 1px solid var(--border-dark);
+  padding-top: 5rem;
+  padding-bottom: 2.5rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 680px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1.5fr 1fr 1.3fr 1.4fr;
+    gap: 3rem;
+  }
+}
+
+.footer-logo-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--text-inverse);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.footer-emblem {
+  display: block;
+  width: 144px;
+  height: 144px;
+  object-fit: contain;
+  border-radius: 50%;
+  margin-bottom: 1.25rem;
+}
+
+.footer-tagline {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-gold-soft);
+  margin-bottom: 1.2rem;
+}
+
+.footer-bio {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.footer-location-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  background-color: var(--bg-dark-surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--text-inverse-muted);
+}
+
+.text-bronze {
+  color: var(--accent-gold-soft);
+}
+
+.footer-col-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-inverse);
+  margin-bottom: 1.25rem;
+}
+
+.footer-col-text {
+  font-size: 0.88rem;
+  margin-bottom: 1.25rem;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-links a {
+  font-size: 0.9rem;
+  color: var(--text-inverse-muted);
+  transition: color var(--transition-fast);
+}
+
+.footer-links a:hover {
+  color: var(--accent-gold-soft);
+  padding-left: 4px;
+}
+
+.footer-whatsapp-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.15rem;
+  background-color: var(--bg-dark-surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  margin-bottom: 1.25rem;
+}
+
+.footer-whatsapp-card:hover {
+  border-color: var(--accent-bronze);
+  background-color: #2a2723;
+  transform: translateY(-2px);
+}
+
+.whatsapp-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #25D366;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.whatsapp-card-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.whatsapp-card-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-inverse-muted);
+}
+
+.whatsapp-card-number {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--text-inverse);
+}
+
+.whatsapp-card-arrow {
+  color: var(--accent-gold-soft);
+}
+
+.footer-social-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.footer-social-link {
+  color: var(--text-inverse-muted);
+}
+
+.footer-social-link:hover {
+  color: var(--accent-gold-soft);
+}
+
+.social-divider {
+  color: var(--border-dark);
+}
+
+/* Disclaimer box */
+.footer-disclaimer-box {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+}
+
+.disclaimer-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-gold-soft);
+  margin-bottom: 0.6rem;
+}
+
+.disclaimer-body {
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--text-inverse-muted);
+}
+
+.disclaimer-notes {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.footer-bottom {
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-inverse-muted);
+}
+
+@media (min-width: 768px) {
+  .footer-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.legal-notice {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.4);
+}

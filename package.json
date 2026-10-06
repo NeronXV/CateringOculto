@@ -1,0 +1,51 @@
+{
+  "name": "chef-carlos-lapaz",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build && node scripts/build-server.mjs",
+    "start": "node server-dist/start.js",
+    "server:migrate": "node server-dist/manage.js migrate",
+    "server:owner": "node server-dist/owner.js",
+    "docker:prepare": "node scripts/prepare-docker.mjs",
+    "preview": "vite preview",
+    "test": "node tests/regression.cjs && node tests/editorial.cjs",
+    "local:prepare": "node scripts/prepare-local.mjs",
+    "local:start": "node scripts/start-local.mjs",
+    "db:up": "docker compose --env-file .env.local up -d --wait",
+    "db:stop": "docker compose --env-file .env.local stop",
+    "db:migrate": "node --env-file=.env.local --import tsx server/manage.ts migrate",
+    "test:auth": "tsx tests/auth.ts",
+    "test:quotes": "tsx tests/quotes.ts",
+    "test:premium": "tsx tests/premium.ts",
+    "typecheck:server": "tsc --noEmit --module esnext --moduleResolution bundler --target es2022 --esModuleInterop --skipLibCheck server/authApp.ts server/localAdmin.ts server/manage.ts server/start.ts server/owner.ts",
+    "db:native": "node scripts/native-db.mjs",
+    "db:native:stop": "node scripts/native-db.mjs stop",
+    "test:mysql": "node scripts/test-mysql.mjs"
+  },
+  "dependencies": {
+    "argon2": "^0.45.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "express-session": "^1.19.0",
+    "lucide-react": "^1.16.0",
+    "mysql2": "^3.24.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/express-session": "^1.19.0",
+    "@types/node": "^22.13.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "esbuild": "0.25.12",
+    "tsx": "^4.23.13",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0"
+  }
+}

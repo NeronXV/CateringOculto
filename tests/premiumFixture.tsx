@@ -1,0 +1,11 @@
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import App from '../src/App';
+import Admin from '../src/admin/Admin';
+import Users from '../src/admin/Users';
+import Operations from '../src/admin/Operations';
+import Tracking from '../src/Tracking';
+import {applyCatalog} from '../src/admin/catalog';
+const state=await (await fetch('/api/local-editor/state')).json();
+applyCatalog(state.published);
+createRoot(document.getElementById('root')!).render(new URLSearchParams(location.search).has('events')?<Operations quoteId={null}/>:new URLSearchParams(location.search).has('tracking')?<Tracking/>:new URLSearchParams(location.search).has('users')?<Users onAccessChange={async()=>{}}/>:new URLSearchParams(location.search).has('admin')?<Admin/>:<App/>);

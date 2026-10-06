@@ -1,0 +1,12 @@
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import '../src/App';
+import Admin from '../src/admin/Admin';
+import {ServerRequest} from '../src/components/cotizador/ServerRequest';
+import {defaultCatalog} from '../src/admin/catalog';
+import {QUOTE_RULES} from '../src/config/quoteRules';
+import '../src/components/cotizador/Cotizador.css';
+const catalog=defaultCatalog();
+QUOTE_RULES.requirementsApproved=true;QUOTE_RULES.requirementsText='Requisito ficticio para probar el formulario.';
+const state={eventType:'cena_privada' as const,eventDate:'2099-06-15',zoneId:catalog.zones[0].id,packageId:catalog.packages[0].id,guestsCount:12,selectedExtras:{},clientName:'Prueba',dietaryRestrictions:'',additionalNotes:''};
+createRoot(document.getElementById('root')!).render(new URLSearchParams(location.search).has('admin')?<Admin/>:<div style={{maxWidth:600,margin:'auto',padding:20}}><ServerRequest state={state} ready/></div>);

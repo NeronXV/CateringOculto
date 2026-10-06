@@ -1,0 +1,5 @@
+# Add to the independent platform proxy after DNS and upstream validation.
+cateringoculto.bajastack.network {
+    encode zstd gzip
+    reverse_proxy catering-oculto-web:3000
+}

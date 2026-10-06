@@ -1,0 +1,55 @@
+/* Presentation layer shared by the complete client demo. */
+:root { color-scheme: dark; --radius-sm: 2px; --radius-md: 4px; }
+html { scroll-padding-top: 110px; }
+::selection { background: #C9A66B; color: #111210; }
+.site-header { background: rgba(12,14,10,.45); border-bottom: 1px solid #ffffff16; padding: 18px 0; }
+.site-header.scrolled { background: rgba(14,16,12,.96); border-bottom-color: var(--border-light); }
+.header-inner { gap: 24px; }
+.brand-emblem, .footer-emblem { filter: invert(1); border-radius: 0; opacity: .9; }
+.brand-name { font-size: 1.5rem; font-weight: 500; }
+.brand-subtitle { font-size: .58rem; letter-spacing: .12em; }
+.nav-link { font-size: .72rem; }
+.nav-list { gap: 1.15rem; }
+.header-cta-btn { font-size: .7rem; padding: .7rem 1rem; }
+.btn-primary { background: #C9AA72; background-image: none; color: #171910; border-color: #C9AA72; box-shadow: none; font-weight: 600; }
+.btn-primary:hover { background: #E0C592; background-image: none; box-shadow: 0 8px 24px #0003; }
+.btn-secondary:hover { background: #C9A66B12; color: #EDD8B1; }
+.btn-whatsapp { background: #C9AA72; color: #171910; box-shadow: none; }
+.btn-whatsapp:hover { background: #DFC28C; box-shadow: none; }
+.section { border-bottom: 1px solid #ffffff08; }
+.section-title { font-weight: 400; }
+.eyebrow { font-size: .65rem; letter-spacing: .23em; }
+.experience-card, .menu-card { box-shadow: none; }
+.experience-card:hover, .menu-card:hover { border-color: #8A7450; }
+.experience-img, .menu-card-img, .gallery-img { filter: saturate(.72); }
+.menu-demo-badge { background: #111210db; color: #DEC18E; }
+.experience-media-badge { background: #10110Dcf; }
+.menu-pricing-bar { background: #20221B; }
+.step-indicator-item.active .step-circle, .step-indicator-item.completed .step-circle { color: #111210; }
+.custom-checkbox.checked { color: #111210; }
+.footer-emblem { width: 125px; height: 125px; }
+.footer-logo-title { font-size: 1.85rem; }
+.footer-whatsapp-card { padding: .85rem; gap: .6rem; }
+.whatsapp-icon-wrap { background: #C9AA72; color: #171910; }
+.whatsapp-card-number { font-size: .87rem; }
+.mobile-drawer-header { gap: 8px; }
+.mobile-drawer-header .brand-name { font-size: 1.25rem; }
+.mobile-drawer-header .brand-emblem { width: 44px; height: 44px; }
+.mobile-drawer-content { overflow-y: auto; }
+@media (max-width: 639px) {
+ .site-header { padding: 14px 0; }
+ .header-inner { gap: 10px; }
+ .brand-copy .brand-name { font-size: 1.3rem; }
+ .brand-copy .brand-subtitle { font-size: .5rem; }
+ .brand-emblem { width: 44px; height: 44px; }
+ .btn { white-space: normal; }
+ .footer-whatsapp-card { max-width: 340px; }
+}
+@media (prefers-reduced-motion: reduce) {
+ html { scroll-behavior: auto; }
+ *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+@media (max-width: 639px) {
+ .header-actions .header-cta-btn { display: none; }
+ .header-actions { flex-shrink: 0; }
+}

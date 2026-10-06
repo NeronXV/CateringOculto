@@ -1,0 +1,84 @@
+name: catering-oculto
+x-app: &app
+  image: catering-oculto-app:local
+  build:
+    context: ..
+    dockerfile: infra/Dockerfile
+  init: true
+  security_opt: ["no-new-privileges:true"]
+  cap_drop: ["ALL"]
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "3"}
+services:
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: catering
+      MARIADB_USER: catering_app
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+    secrets: [db_password, db_root_password]
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db-permissions.sql:/docker-entrypoint-initdb.d/90-permissions.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks: [database]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+  migrate:
+    <<: *app
+    command: ["node", "server-dist/manage.js", "migrate"]
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: catering
+      DB_USER: root
+      DB_PASSWORD_FILE: /run/secrets/db_root_password
+    secrets: [db_root_password]
+    depends_on:
+      db: {condition: service_healthy}
+    networks: [database]
+    restart: "no"
+  app:
+    <<: *app
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      PUBLIC_ORIGIN: https://catering.invalid
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: catering
+      DB_USER: catering_app
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      SESSION_SECRET_FILE: /run/secrets/session_secret
+    secrets: [db_password, session_secret]
+    volumes: ["media:/app/media"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks: [edge, database]
+networks:
+  edge:
+  database:
+    internal: true
+volumes:
+  db_data:
+  media:
+secrets:
+  db_password:
+    file: ../.local-data/docker-secrets/db_password
+  db_root_password:
+    file: ../.local-data/docker-secrets/db_root_password
+  session_secret:
+    file: ../.local-data/docker-secrets/session_secret

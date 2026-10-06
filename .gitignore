@@ -1,0 +1,16 @@
+node_modules/
+dist/
+server-dist/
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+playwright-report/
+test-results/
+.DS_Store
+Thumbs.db
+backups/
+uploads/
+.local-data/
+tmp/

@@ -1,0 +1,2 @@
+.receipt-details{margin:1rem 0;text-align:left}.receipt-details summary{cursor:pointer;font-weight:600}.receipt-details pre,.receipt-print pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;line-height:1.6}.receipt-print{display:none}
+@media print{body:has(.receipt-print)> :not(.receipt-print){display:none!important}.receipt-print{display:block;color:#111;background:#fff;padding:12mm;font:11pt Georgia,serif}.receipt-print h1{font-size:24pt}.receipt-print h2{font-size:16pt}.receipt-print pre{font-size:10pt} @page{margin:12mm}}
