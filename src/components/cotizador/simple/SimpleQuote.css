@@ -1,0 +1,994 @@
+/* ==========================================================================
+   SIMPLE QUOTE FLOW - CATERING OCULTO
+   Mobile-First, Minimalist, Elegant, High-Touch UX
+   ========================================================================== */
+
+.simple-quote-section {
+  padding: 5rem 0 6rem;
+  background-color: var(--bg-base);
+  position: relative;
+}
+
+.simple-quote-intro {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 3rem;
+  padding: 0 1rem;
+}
+
+.simple-intro-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent-bronze);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.simple-intro-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  color: var(--text-primary);
+  line-height: 1.15;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.simple-intro-subtitle {
+  font-size: clamp(0.9375rem, 2vw, 1.0625rem);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Card Container */
+.simple-card-container {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.45);
+}
+
+/* Progress Pills */
+.simple-progress-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.progress-step-pill {
+  flex: 1;
+  height: 4px;
+  background: var(--border-medium);
+  border-radius: var(--radius-pill);
+  transition: background var(--transition-smooth);
+}
+
+.progress-step-pill.completed {
+  background: var(--accent-olive);
+}
+
+.progress-step-pill.current {
+  background: var(--accent-bronze);
+}
+
+/* Step Header */
+.simple-step-header {
+  margin-bottom: 1.75rem;
+}
+
+.simple-step-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-bronze);
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.simple-step-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 4vw, 1.875rem);
+  color: var(--text-primary);
+  line-height: 1.25;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.simple-step-desc {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Alerts */
+.simple-step-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error-text);
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.simple-hint-box {
+  background: var(--bg-subtle);
+  border: 1px dashed var(--border-light);
+  color: var(--text-muted);
+  padding: 1rem;
+  text-align: center;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  margin-top: 1.25rem;
+}
+
+/* ==========================================================================
+   STEP 1: CALENDAR
+   ========================================================================== */
+.simple-calendar-card {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.simple-calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.calendar-month-heading {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.calendar-nav-btn {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.calendar-nav-btn:hover:not(:disabled) {
+  border-color: var(--accent-bronze);
+  color: var(--text-primary);
+}
+
+.calendar-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.simple-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.simple-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-cell-blank {
+  height: 42px;
+}
+
+.calendar-day-btn {
+  height: 42px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.calendar-day-btn:hover:not(:disabled) {
+  background: var(--bg-surface);
+  border-color: var(--border-medium);
+}
+
+.calendar-day-btn.selected {
+  background: var(--accent-bronze);
+  color: #111210;
+  font-weight: 700;
+}
+
+.calendar-day-btn.past {
+  color: var(--border-medium);
+  cursor: not-allowed;
+}
+
+.calendar-day-btn.unavailable {
+  color: var(--border-medium);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.day-active-dot {
+  width: 4px;
+  height: 4px;
+  background: #111210;
+  border-radius: 50%;
+  margin-top: 1px;
+}
+
+.simple-selected-chips-box {
+  margin-top: 1.5rem;
+}
+
+.selected-chips-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--accent-bronze);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.selected-chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.selected-date-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-medium);
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+}
+
+.chip-remove-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.chip-remove-btn:hover {
+  color: var(--color-error-text);
+}
+
+/* ==========================================================================
+   STEP 2: MEAL SERVICES PER DAY
+   ========================================================================== */
+.day-services-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.day-service-card {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  transition: border-color var(--transition-fast);
+}
+
+.day-service-card.card-warning {
+  border-color: var(--color-warning-border);
+}
+
+.day-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.75rem;
+}
+
+.day-card-date-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.day-card-icon {
+  color: var(--accent-bronze);
+}
+
+.day-card-date {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.day-card-count {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.day-meal-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.625rem;
+}
+
+.meal-pill-btn {
+  min-height: 48px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  padding: 0.5rem;
+}
+
+.meal-pill-btn:hover {
+  border-color: var(--accent-bronze);
+  color: var(--text-primary);
+}
+
+.meal-pill-btn.active {
+  background: rgba(201, 166, 107, 0.12);
+  border-color: var(--accent-bronze);
+  color: var(--accent-bronze-light);
+  font-weight: 600;
+}
+
+.meal-pill-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid var(--border-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.meal-pill-btn.active .meal-pill-checkbox {
+  background: var(--accent-bronze);
+  border-color: var(--accent-bronze);
+  color: #111210;
+}
+
+.day-warning-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-warning-text);
+  margin-top: 0.75rem;
+}
+
+/* ==========================================================================
+   STEP 3: GUEST COUNT
+   ========================================================================== */
+.guest-counter-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+}
+
+.guest-counter-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.guest-count-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.guest-count-btn:hover:not(:disabled) {
+  border-color: var(--accent-bronze);
+  background: var(--accent-bronze);
+  color: #111210;
+}
+
+.guest-count-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.guest-count-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.guest-count-input {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  text-align: center;
+  width: 100%;
+  padding: 0;
+  outline: none;
+}
+
+.guest-count-unit {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.guest-counter-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--accent-olive-light);
+  background: var(--accent-olive-subtle);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+}
+
+/* ==========================================================================
+   STEP 4: CONTACT
+   ========================================================================== */
+.simple-contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.simple-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.simple-field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.required-star {
+  color: var(--accent-bronze);
+}
+
+.simple-text-input,
+.simple-textarea {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 0.875rem 1rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  transition: border-color var(--transition-fast);
+}
+
+.simple-text-input:focus,
+.simple-textarea:focus {
+  outline: none;
+  border-color: var(--accent-bronze);
+}
+
+.simple-text-input.has-error {
+  border-color: var(--color-error-border);
+}
+
+.simple-field-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.simple-field-error {
+  font-size: 0.75rem;
+  color: var(--color-error-text);
+}
+
+/* ==========================================================================
+   STEP 5: SUMMARY & SUBMISSION
+   ========================================================================== */
+.summary-card-overview {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.overview-header-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1rem;
+}
+
+.overview-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.overview-icon {
+  color: var(--accent-bronze);
+}
+
+.overview-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.overview-table-title {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.overview-day-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.overview-day-date {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.overview-day-services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.overview-service-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8125rem;
+}
+
+.service-name {
+  color: var(--accent-bronze-light);
+  font-weight: 500;
+}
+
+.service-note {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.overview-contact-block {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.overview-contact-line {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.overview-notes-line {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+.overview-price-notice {
+  margin-top: 1.25rem;
+  background: rgba(201, 166, 107, 0.08);
+  border: 1px solid rgba(201, 166, 107, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 0.875rem;
+}
+
+.notice-inner {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.notice-icon {
+  color: var(--accent-bronze);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.summary-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error-text);
+  padding: 0.875rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.summary-consent-block {
+  margin-bottom: 1.5rem;
+}
+
+.simple-consent-label {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.simple-checkbox {
+  margin-top: 3px;
+  accent-color: var(--accent-bronze);
+}
+
+.btn-submit-itinerary {
+  width: 100%;
+  min-height: 52px;
+  background: var(--accent-bronze);
+  color: #111210;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-submit-itinerary:hover:not(:disabled) {
+  background: var(--accent-bronze-light);
+}
+
+.btn-submit-itinerary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Navigation Buttons */
+.simple-nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.simple-nav-back-only {
+  margin-top: 1rem;
+}
+
+.simple-btn-prev {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.simple-btn-prev:hover:not(:disabled) {
+  border-color: var(--accent-bronze);
+  color: var(--text-primary);
+}
+
+.simple-btn-next {
+  background: var(--accent-bronze);
+  color: #111210;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.simple-btn-next:hover:not(:disabled) {
+  background: var(--accent-bronze-light);
+}
+
+/* ==========================================================================
+   SUCCESS / RECEIPT VIEW
+   ========================================================================== */
+.simple-receipt-view {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.receipt-success-banner {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.receipt-success-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(182, 189, 157, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.receipt-success-icon {
+  color: var(--accent-olive-light);
+}
+
+.receipt-eyebrow {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-olive);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.receipt-folio-display {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.receipt-folio-display strong {
+  color: var(--accent-bronze);
+}
+
+.receipt-success-subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.receipt-summary-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.receipt-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.receipt-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.receipt-itinerary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-bottom: 1.25rem;
+}
+
+.receipt-itinerary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.itinerary-date-col {
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.itinerary-services-col {
+  color: var(--accent-bronze-light);
+}
+
+.receipt-client-tag {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.receipt-actions-box {
+  text-align: center;
+}
+
+.btn-whatsapp-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: #25D366;
+  color: #0b2212;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 10px 24px -4px rgba(37, 211, 102, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.btn-whatsapp-primary:hover {
+  background: #2fe06f;
+  transform: translateY(-1px);
+}
+
+.receipt-wa-note {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0.75rem 0 1.75rem;
+}
+
+.receipt-secondary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.receipt-reset-btn {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.receipt-reset-btn:hover {
+  border-color: var(--accent-bronze);
+  color: var(--text-primary);
+}
+
+/* Animations */
+.animate-fade-in {
+  animation: simpleFadeIn 240ms ease-out forwards;
+}
+
+@keyframes simpleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .day-meal-options {
+    grid-template-columns: 1fr;
+  }
+  .receipt-itinerary-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .overview-day-row {
+    align-items: flex-start;
+  }
+}

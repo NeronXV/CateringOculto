@@ -3,14 +3,16 @@ import { useQuoteDraft } from './hooks/useQuoteDraft';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { Hero } from './components/sections/Hero';
-import { Experiences } from './components/sections/Experiences';
-import { Menus } from './components/sections/Menus';
+import { MainServices } from './components/sections/MainServices';
+// Componentes conservados intactos para reactivación futura sin pérdida de código
+import { Experiences as _Experiences } from './components/sections/Experiences';
+import { Menus as _Menus } from './components/sections/Menus';
 import { Philosophy } from './components/sections/Philosophy';
 import { Gallery } from './components/sections/Gallery';
 import { HowItWorks } from './components/sections/HowItWorks';
 import { FaqSection } from './components/sections/FaqSection';
 import { CotizadorContainer } from './components/cotizador/CotizadorContainer';
-import { EventType } from './types';
+import { SimpleQuote } from './components/cotizador/SimpleQuote';
 import './styles/globals.css';
 import './styles/dark-theme.css';
 
@@ -24,54 +26,47 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleSelectPackageFromMenu = (pkgId: string) => {
-    draft.changeField('packageId', pkgId);
-    scrollToCotizador();
-  };
-
-  const handleSelectExperience = (eventType: EventType) => {
-    draft.changeField('eventType', eventType);
-    scrollToCotizador();
-  };
+  const isLegacy = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('legacy') === '1';
 
   return (
     <div className="app-layout">
-      {/* 1. Header Navigation */}
+      {/* 1. Navegación principal */}
       <Header onOpenCotizador={scrollToCotizador} />
 
       <main id="main-content">
-        {/* 2. Portada (Hero) */}
+        {/* 2. Portada (Hero directo: Chef privado & catering en La Paz) */}
         <Hero onOpenCotizador={scrollToCotizador} />
 
-        {/* 3. Experiencias Culinarias */}
-        <Experiences onSelectExperience={handleSelectExperience} />
+        {/* 3. Solicitar Disponibilidad (SimpleQuote por defecto, legacy con ?legacy=1) */}
+        {isLegacy ? (
+          <CotizadorContainer
+            state={draft.quote}
+            onChange={draft.changeField}
+            onReset={draft.reset}
+            notice={draft.notice}
+            storageStatus={draft.storageStatus}
+          />
+        ) : (
+          <SimpleQuote />
+        )}
 
-        {/* 4. Menús y Paquetes Gastronómicos */}
-        <Menus onSelectPackage={handleSelectPackageFromMenu} />
+        {/* 4. Servicios Principales: Desayuno, Comida y Cena */}
+        <MainServices onSelectService={scrollToCotizador} />
 
-        {/* 5. Nuestra Cocina (Dark contrast section) */}
-        <Philosophy />
-
-        {/* 6. Galería Visual */}
-        <Gallery />
-
-        {/* 7. Cómo Funciona */}
+        {/* 5. Cómo Funciona: 4 pasos conversacionales */}
         <HowItWorks onOpenCotizador={scrollToCotizador} />
 
-        {/* 8. Cotizador Funcional Interactivo */}
-        <CotizadorContainer
-          state={draft.quote}
-          onChange={draft.changeField}
-          onReset={draft.reset}
-          notice={draft.notice}
-          storageStatus={draft.storageStatus}
-        />
+        {/* 6. Nuestra Cocina (Chef Carlos Zárate & Karen) */}
+        <Philosophy />
 
-        {/* 9. Preguntas Frecuentes y Políticas */}
+        {/* 7. Galería Visual */}
+        <Gallery />
+
+        {/* 8. Dudas Habituales (4 preguntas esenciales) */}
         <FaqSection />
       </main>
 
-      {/* 10. Footer con contacto y avisos */}
+      {/* 9. Contacto y Footer */}
       <Footer />
     </div>
   );

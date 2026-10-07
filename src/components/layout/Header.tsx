@@ -43,11 +43,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCotizador }) => {
   }, [mobileMenuOpen]);
 
   const navLinks = [
-    { label: 'Experiencias', href: '#experiencias' },
-    { label: 'Menús', href: '#menus' },
+    { label: 'Servicios', href: '#servicios' },
+    { label: 'Cómo Funciona', href: '#como-funciona' },
     { label: 'Nuestra Cocina', href: '#cocina' },
     { label: 'Galería', href: '#galeria' },
-    { label: 'Cómo Funciona', href: '#como-funciona' },
     { label: 'Preguntas', href: '#preguntas' },
   ];
 
@@ -84,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCotizador }) => {
               className="btn btn-primary header-cta-btn"
               onClick={() => onOpenCotizador()}
             >
-              <span>Diseña tu evento</span>
+              <span>Consultar disponibilidad</span>
               <ArrowRight size={15} />
             </button>
 
@@ -159,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCotizador }) => {
                 onOpenCotizador();
               }}
             >
-              <span>Diseña tu evento</span>
+              <span>Consultar disponibilidad</span>
               <ArrowRight size={16} />
             </button>
 

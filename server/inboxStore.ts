@@ -8,7 +8,13 @@ function followup(row:RowDataPacket):Followup {
 }
 function item(row:RowDataPacket):InboxItem {
   const estimate=jsonDocument(row.estimate_snapshot),contact=jsonDocument(row.contact_document);
-  return {id:row.id,folio:row.folio,createdAt:row.created_at,name:contact.name,eventDate:estimate.selection.eventDate,guests:estimate.selection.guestsCount,totalCents:estimate.breakdown.totalEstimatedCents,followup:followup(row)};
+  const isItinerary = estimate && estimate.kind === 'itinerary';
+  const eventDate = isItinerary
+    ? (estimate.summary?.startDate ? `${estimate.summary.startDate}${estimate.summary.dayCount > 1 ? ` (${estimate.summary.dayCount} días)` : ''}` : 'Itinerario')
+    : estimate.selection?.eventDate || '';
+  const guests = estimate.selection?.guestsCount ?? 0;
+  const totalCents = isItinerary ? 0 : (estimate.breakdown?.totalEstimatedCents ?? 0);
+  return {id:row.id,folio:row.folio,createdAt:row.created_at,name:contact.name,eventDate,guests,totalCents,followup:followup(row)};
 }
 const joined='SELECT q.*,f.revision,f.status,f.assignee_id,f.next_action,f.next_date FROM quote_requests q LEFT JOIN quote_followup f ON f.quote_id=q.id';
 function quoteId(id:string) {if(!/^[a-f0-9-]{36}$/.test(id))throw new QuoteError('Solicitud no encontrada.',404);return id;}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Compass, HeartHandshake, Fish, Sparkles } from 'lucide-react';
+import { Sparkles, MapPin } from 'lucide-react';
 import { SECTIONS_CONFIG } from '../../config/sections';
 import './Philosophy.css';
 
@@ -7,95 +7,48 @@ export const Philosophy: React.FC = () => {
   return (
     <section className="section section-dark" id="cocina" aria-labelledby="cocina-heading">
       <div className="container">
-        <div className="philosophy-grid">
-          {/* Left Column: Visual Composition */}
+        <div className="philosophy-grid" style={{ alignItems: 'center' }}>
+          {/* Visual column: single powerful photograph */}
           <div className="philosophy-media-col">
-            <div className="philosophy-image-stack">
-              <div className="image-stack-primary">
+            <div className="philosophy-image-stack" style={{ display: 'block' }}>
+              <div className="image-stack-primary" style={{ transform: 'none', margin: '0 auto' }}>
                 <img
                   src={SECTIONS_CONFIG.philosophy.photos[0].image}
-                  alt={SECTIONS_CONFIG.philosophy.photos[0].imageAlt}
+                  alt="Chef preparando platillo con ingredientes locales"
                   className="stack-img"
                   loading="lazy"
-                  width="900"
-                  height="1100"
-                />
-                <span className="badge-demo stack-demo-tag">{SECTIONS_CONFIG.philosophy.photoNote}</span>
-              </div>
-              <div className="image-stack-secondary">
-                <img
-                  src={SECTIONS_CONFIG.philosophy.photos[1].image}
-                  alt={SECTIONS_CONFIG.philosophy.photos[1].imageAlt}
-                  className="stack-img"
-                  loading="lazy"
-                  width="600"
-                  height="450"
+                  width="700"
+                  height="850"
+                  style={{ borderRadius: '10px', maxHeight: '480px', objectFit: 'cover', width: '100%' }}
                 />
               </div>
             </div>
           </div>
 
-          {/* Right Column: Editorial Narrative */}
+          {/* Text column: concise & elegant */}
           <div className="philosophy-text-col">
             <div className="eyebrow">
               <Sparkles size={14} />
-              <span>Nuestra Filosofía</span>
+              <span>Nuestra Cocina</span>
             </div>
 
             <h2 id="cocina-heading" className="section-title">
-              {SECTIONS_CONFIG.philosophy.title}
+              Hospitalidad, producto local y técnica de autor
             </h2>
 
             <div className="editorial-divider"></div>
 
-            <p className="philosophy-lead">{SECTIONS_CONFIG.philosophy.description}</p>
+            <p className="philosophy-lead" style={{ fontSize: '1.05rem', lineHeight: '1.7', color: '#deded7' }}>
+              Catering Oculto nace de la pasión del Chef Carlos Zárate y Karen por compartir la riqueza marina del Mar de Cortés y los frutos de las huertas sudcalifornianas.
+            </p>
 
-            <div className="philosophy-pillars">
-              <div className="pillar-item">
-                <div className="pillar-icon">
-                  <Fish size={20} />
-                </div>
-                <div className="pillar-content">
-                  <h3 className="pillar-title">{SECTIONS_CONFIG.philosophy.pillars[0].title}</h3>
-                  <p className="pillar-desc">
-                    {SECTIONS_CONFIG.philosophy.pillars[0].description}
-                  </p>
-                </div>
-              </div>
+            <p style={{ color: '#aab2a7', fontSize: '0.95rem', lineHeight: '1.6', margin: '1rem 0 1.5rem' }}>
+              Cocinamos al momento en tu villa o residencia, adaptando cada servicio al ritmo de tus días con el cuidado, la limpieza y la calidez de un equipo profesional que ama lo que hace.
+            </p>
 
-              <div className="pillar-item">
-                <div className="pillar-icon">
-                  <Flame size={20} />
-                </div>
-                <div className="pillar-content">
-                  <h3 className="pillar-title">{SECTIONS_CONFIG.philosophy.pillars[1].title}</h3>
-                  <p className="pillar-desc">
-                    {SECTIONS_CONFIG.philosophy.pillars[1].description}
-                  </p>
-                </div>
-              </div>
-
-              <div className="pillar-item">
-                <div className="pillar-icon">
-                  <HeartHandshake size={20} />
-                </div>
-                <div className="pillar-content">
-                  <h3 className="pillar-title">{SECTIONS_CONFIG.philosophy.pillars[2].title}</h3>
-                  <p className="pillar-desc">
-                    {SECTIONS_CONFIG.philosophy.pillars[2].description}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Chef Team Profile Placeholder Box (No false Michelin or made up awards) */}
-            <div className="chef-team-box">
-              <div className="chef-team-header">
-                <Compass size={18} className="text-bronze" />
-                <span className="chef-team-label">El Equipo de Cocina</span>
-              </div>
-              <p className="chef-team-bio">{SECTIONS_CONFIG.philosophy.teamBio}</p>
-              <span className="chef-team-note">{SECTIONS_CONFIG.philosophy.teamNote}</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#c3ac7c', fontSize: '0.88rem', fontWeight: 600 }}>
+              <MapPin size={16} />
+              <span>La Paz · Cerritos · Todos Santos · El Triunfo</span>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { SECTIONS_CONFIG } from '../../config/sections';
 import React from 'react';
-import { Camera, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import './Gallery.css';
 
 export const Gallery: React.FC = () => {
@@ -12,18 +12,14 @@ export const Gallery: React.FC = () => {
         <div className="section-header-centered">
           <div className="eyebrow">
             <Sparkles size={14} />
-            <span>Registro Visual</span>
+            <span>Galería</span>
           </div>
           <h2 id="galeria-heading" className="section-title">
-            {SECTIONS_CONFIG.gallery.title}
+            Platos, preparaciones y momentos
           </h2>
           <p className="section-description">
-            {SECTIONS_CONFIG.gallery.description}
+            Un vistazo a nuestros montajes de mesa, técnica en cocina y presentación de platillos en residencia.
           </p>
-          <div className="gallery-notice-badge">
-            <Camera size={13} />
-            <span>{SECTIONS_CONFIG.gallery.notice}</span>
-          </div>
         </div>
 
         <div className="gallery-composition-grid">

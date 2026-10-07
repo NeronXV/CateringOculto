@@ -12,6 +12,8 @@ import { resolve } from 'node:path';
 import { hasPublishedImage } from '../src/admin/catalog';
 import { estimateQuote, QuoteError } from './quoteEngine';
 import { QuoteStore } from './quoteStore';
+import { estimateItinerary } from './itineraryEngine';
+import { ItineraryStore } from './itineraryStore';
 import { InboxStore } from './inboxStore';
 
 declare module 'express-session' {
@@ -52,9 +54,12 @@ export async function authApp(pool: Pool, secret: string, mediaDirectory = resol
   const operations=new Operations(pool);
   registerPublicOperations(app,operations);
   const quotes = new QuoteStore(pool);
+  const itineraries = new ItineraryStore(pool);
   const quoteLimit=rateLimit({windowMs:60_000,limit:30,legacyHeaders:false,message:{error:'Espera un minuto antes de volver a calcular o guardar.'}});
   app.post('/quotes/estimate',quoteLimit,async(req,res)=>res.json(estimateQuote((await store.read()).published,req.body)));
   app.post('/quotes/submit',quoteLimit,async(req,res)=>res.status(201).json(await quotes.submit(req.body)));
+  app.post('/quotes/itinerary/estimate',quoteLimit,async(req,res)=>res.json(estimateItinerary((await store.read()).published,req.body)));
+  app.post('/quotes/itinerary/submit',quoteLimit,async(req,res)=>res.status(201).json(await itineraries.submit(req.body)));
   app.use(session({name:'restauran.sid',secret,store:new MysqlSessions(pool),resave:false,saveUninitialized:false,
     cookie:{httpOnly:true,sameSite:'strict',secure:options.secureCookies,maxAge:8*60*60*1000,path:'/'}}));
   app.get('/media/:id',async(req,res)=>{

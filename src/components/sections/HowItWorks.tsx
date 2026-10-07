@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Compass, Sliders, MessageCircle, ArrowRight } from 'lucide-react';
+import { Calendar, Utensils, Users, MessageCircle, ArrowRight, Sparkles } from 'lucide-react';
 import './HowItWorks.css';
 
 interface HowItWorksProps {
@@ -10,21 +10,27 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenCotizador }) => {
   const steps = [
     {
       number: '01',
-      title: 'Elige tu experiencia',
-      description: 'Explora nuestros formatos de servicio (cena privada, celebración o catering) y selecciona el estilo de menú que mejor resuene con tu evento.',
-      icon: <Compass size={24} />
+      title: 'Elige tus fechas',
+      description: 'Selecciona los días que estarás en tu villa o residencia en La Paz. Pueden ser días consecutivos o fechas puntuales.',
+      icon: <Calendar size={22} />
     },
     {
       number: '02',
-      title: 'Configura comensales y complementos',
-      description: 'Indica invitados, fecha y localidad. Elige tus preferencias de platillos y los complementos disponibles para tu menú.',
-      icon: <Sliders size={24} />
+      title: 'Elige tus servicios',
+      description: 'Marca qué necesitas cada día: desayuno, comida, cena o combinación de ellos según el ritmo de tu viaje.',
+      icon: <Utensils size={22} />
     },
     {
       number: '03',
-      title: 'Revisa tu presupuesto y guarda tu solicitud',
-      description: 'Recibe un folio, conserva tu presupuesto y compártelo por WhatsApp o correo. El chef tendrá tus preferencias y podrá centrarse en confirmar disponibilidad y resolver lo pendiente.',
-      icon: <MessageCircle size={24} />
+      title: 'Indica comensales',
+      description: 'Dinos cuántas personas disfrutarán del servicio y si existe alguna alergia o preferencia alimentaria.',
+      icon: <Users size={22} />
+    },
+    {
+      number: '04',
+      title: 'Confirmación directa',
+      description: 'Carlos y Karen revisan tu solicitud y se ponen en contacto contigo directamente por WhatsApp para afinar el menú.',
+      icon: <MessageCircle size={22} />
     }
   ];
 
@@ -34,17 +40,17 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenCotizador }) => {
         <div className="section-header-centered">
           <div className="eyebrow">
             <Sparkles size={14} />
-            <span>Hospitalidad Simple & Directa</span>
+            <span>Paso a Paso</span>
           </div>
           <h2 id="como-funciona-heading" className="section-title">
-            Cómo diseñamos tu evento
+            ¿Cómo funciona el servicio?
           </h2>
           <p className="section-description">
-            Sin formularios interminables ni reservas automáticas impersonales. Conectamos directamente contigo desde el primer momento.
+            Sin intermediarios ni procesos complicados. Una atención cálida, directa y personalizada desde el primer mensaje.
           </p>
         </div>
 
-        <div className="steps-grid">
+        <div className="steps-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))' }}>
           {steps.map((step, idx) => (
             <div key={idx} className="step-card">
               <div className="step-badge-row">
@@ -64,7 +70,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenCotizador }) => {
             className="btn btn-primary"
             onClick={onOpenCotizador}
           >
-            <span>Comenzar configuración ahora</span>
+            <span>Consultar disponibilidad</span>
             <ArrowRight size={16} />
           </button>
         </div>
