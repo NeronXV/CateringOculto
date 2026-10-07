@@ -25,7 +25,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenCotizador }) => (
         <img className="hero-emblem" src="/logo-catering-oculto.png" alt="Catering Oculto · Chef Carlos Zárate" width="120" height="120" />
         <p className="hero-signature">{BUSINESS_CONFIG.brandName}</p>
         <h1 className="hero-title">El arte de compartir<br /><em>lo extraordinario.</em></h1>
-        <p className="hero-lead">Desayunos, comidas y cenas preparados al momento en tu residencia o alojamiento. El arte de compartir lo extraordinario en la intimidad de tu estancia.</p>
+        <p className="hero-lead">Desayunos, comidas y cenas preparados al momento en tu residencia o alojamiento.</p>
         <div className="hero-cta-group">
           <button type="button" className="btn btn-primary hero-btn-main" onClick={onOpenCotizador}>Consultar disponibilidad <ArrowRight size={16} /></button>
           <a href="#servicios" className="btn btn-secondary hero-btn-sec">Ver servicios</a>
@@ -33,7 +33,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenCotizador }) => (
       </div>
     </div>
     <div className="hero-bottom">
-      <span>CHEF CARLOS ZÁRATE <i /> KAREN</span>
+      <span>CHEF CARLOS ZÁRATE <i /> KAREN ASCENCIO</span>
       <a href="#servicios" aria-label="Descubrir servicios"><ArrowDown size={18} /></a>
       <span>DESAYUNO · COMIDA · CENA</span>
     </div>

@@ -265,7 +265,7 @@ export default function Inbox({ onEvent }: { onEvent?: (id: string) => void } = 
                       className="btn-whatsapp-prominent"
                       target="_blank"
                       rel="noreferrer"
-                      href={`https://wa.me/${whatsAppDigits(detail.contact.phone)}?text=${encodeURIComponent(`Hola ${detail.contact.name}, te contactamos Carlos y Karen de Catering Oculto sobre tu solicitud de servicio.`)}`}
+                      href={`https://wa.me/${whatsAppDigits(detail.contact.phone)}?text=${encodeURIComponent(`Hola ${detail.contact.name}, te contactamos Carlos y Karen Ascencio de Catering Oculto sobre tu solicitud de servicio.`)}`}
                     >
                       <MessageCircle size={18} />
                       <span>Abrir WhatsApp</span>
@@ -393,7 +393,7 @@ export default function Inbox({ onEvent }: { onEvent?: (id: string) => void } = 
                 <form className="followup-form" onSubmit={saveFollowup}>
                   <fieldset disabled={busy}>
                     <label>
-                      <span>Añadir nota interna (solo para Carlos y Karen):</span>
+                      <span>Añadir nota interna (solo para Carlos y Karen Ascencio):</span>
                       <textarea
                         rows={2}
                         maxLength={4000}

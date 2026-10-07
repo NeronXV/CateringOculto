@@ -71,7 +71,7 @@ export const SimpleReceiptView: React.FC<SimpleReceiptViewProps> = ({ receipt, o
           <span>Continuar por WhatsApp</span>
         </a>
         <p className="receipt-wa-note">
-          Se abrirá WhatsApp con el mensaje y tu folio preparados para enviar directamente a Carlos y Karen.
+          Se abrirá WhatsApp con el mensaje y tu folio preparados para enviar directamente a Carlos y Karen Ascencio.
         </p>
 
         <div className="receipt-secondary-actions">

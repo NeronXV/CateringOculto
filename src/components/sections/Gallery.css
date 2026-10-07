@@ -38,6 +38,8 @@
   border: 1px solid var(--border-light);
   box-shadow: var(--shadow-subtle);
   transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
 }
 
 .gallery-item:hover {
@@ -48,16 +50,15 @@
 .gallery-image-wrapper {
   position: relative;
   width: 100%;
+  height: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
+  flex: 1;
 }
 
 @media (min-width: 1024px) {
-  .gallery-item.item-portrait .gallery-image-wrapper {
+  .gallery-image-wrapper {
     aspect-ratio: 3 / 4;
-  }
-  .gallery-item.item-landscape .gallery-image-wrapper {
-    aspect-ratio: 4 / 3;
   }
 }
 

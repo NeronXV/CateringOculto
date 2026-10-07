@@ -158,7 +158,7 @@ export default function Operations({ quoteId }: { quoteId: string | null }) {
         <div>
           <span className="operations-eyebrow">AGENDA OPERATIVA</span>
           <h1>Agenda y calendario de eventos</h1>
-          <p>Carlos y Karen · Un evento principal por día. Revisa disponibilidad, estancias e información para la cocina.</p>
+          <p>Carlos y Karen Ascencio · Un evento principal por día. Revisa disponibilidad, estancias e información para la cocina.</p>
         </div>
       </header>
 
@@ -238,7 +238,7 @@ export default function Operations({ quoteId }: { quoteId: string | null }) {
                     className="btn-whatsapp-prominent"
                     target="_blank"
                     rel="noreferrer"
-                    href={`https://wa.me/${whatsAppDigits(data.phone)}?text=${encodeURIComponent(`Hola ${data.name}, te contactamos Carlos y Karen de Catering Oculto sobre tu evento del ${data.date}.`)}`}
+                    href={`https://wa.me/${whatsAppDigits(data.phone)}?text=${encodeURIComponent(`Hola ${data.name}, te contactamos Carlos y Karen Ascencio de Catering Oculto sobre tu evento del ${data.date}.`)}`}
                   >
                     <MessageCircle size={16} />
                     <span>WhatsApp con {data.name}</span>
@@ -391,7 +391,7 @@ export default function Operations({ quoteId }: { quoteId: string | null }) {
                     maxLength={8000}
                     value={data.internalNotes}
                     onChange={e => patch({ internalNotes: e.target.value })}
-                    placeholder="Detalles clave para el servicio de Carlos y Karen…"
+                    placeholder="Detalles clave para el servicio de Carlos y Karen Ascencio…"
                   />
                 </label>
               </div>

@@ -11,7 +11,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenCotizador }) => {
     {
       number: '01',
       title: 'Elige tus fechas',
-      description: 'Selecciona los días que estarás en tu villa o residencia en La Paz. Pueden ser días consecutivos o fechas puntuales.',
+      description: 'Selecciona los días que estarás en tu residencia. Pueden ser días consecutivos o fechas puntuales.',
       icon: <Calendar size={22} />
     },
     {
@@ -29,7 +29,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenCotizador }) => {
     {
       number: '04',
       title: 'Confirmación directa',
-      description: 'Carlos y Karen revisan tu solicitud y se ponen en contacto contigo directamente por WhatsApp para afinar el menú.',
+      description: 'Carlos y Karen Ascencio revisan tu solicitud y se ponen en contacto contigo directamente por WhatsApp para afinar el menú.',
       icon: <MessageCircle size={22} />
     }
   ];

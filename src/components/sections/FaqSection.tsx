@@ -13,7 +13,7 @@ const ESSENTIAL_FAQS = [
   },
   {
     question: '¿La solicitud en la página confirma automáticamente mi fecha?',
-    answer: 'No. La solicitud nos permite conocer tus fechas, comensales y servicios deseados. Carlos y Karen revisan personalmente la agenda y te contactan de inmediato por WhatsApp para confirmar disponibilidad antes de cualquier anticipo.'
+    answer: 'No. La solicitud nos permite conocer tus fechas, comensales y servicios deseados. Carlos y Karen Ascencio revisan personalmente la agenda y te contactan de inmediato por WhatsApp para confirmar disponibilidad antes de cualquier anticipo.'
   },
   {
     question: '¿Ofrecen servicio fuera de La Paz?',

@@ -76,8 +76,8 @@ export const SECTIONS_CONFIG = {
     "description": "Nuestra propuesta en Catering Oculto nace de una relación de respeto absoluto con el entorno de Baja California Sur. No creemos en recetas estandarizadas: cocinamos con lo que la marea, la luna y el clima del oasis nos ofrecen en cada jornada.",
     "photos": [
       {
-        "image": "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=900&q=80",
-        "imageAlt": "Manos de chef emplatando con precisión artesanal"
+        "image": "/chefcarlos.jpeg",
+        "imageAlt": "Chef Carlos Zárate"
       },
       {
         "image": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80",

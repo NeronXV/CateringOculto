@@ -97,7 +97,7 @@ export const SimpleSummary: React.FC<SimpleSummaryProps> = ({
           <div className="notice-inner">
             <ShieldCheck size={18} className="notice-icon" />
             <div>
-              <strong>Sin cargos inmediatos:</strong> El presupuesto final, logística de traslado y detalles de cada platillo se acuerdan personalmente con Carlos y Karen. No se cobra nada en este sitio web.
+              <strong>Sin cargos inmediatos:</strong> El presupuesto final, logística de traslado y detalles de cada platillo se acuerdan personalmente con Carlos y Karen Ascencio. No se cobra nada en este sitio web.
             </div>
           </div>
         </div>

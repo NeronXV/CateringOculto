@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
           <div className="footer-brand-col">
             <img className="footer-emblem" src="/logo-catering-oculto.png" alt="Catering Oculto · Chef Carlos Zarate" width="120" height="120" loading="lazy" />
             <span className="footer-logo-title">{BUSINESS_CONFIG.brandName}</span>
-            <p className="footer-tagline">Chef Carlos Zárate & Karen</p>
+            <p className="footer-tagline">Chef Carlos Zárate & Karen Ascencio</p>
             <p className="footer-bio">
               Chef privado y catering en villas, residencias y alojamientos de La Paz y Baja California Sur.
             </p>

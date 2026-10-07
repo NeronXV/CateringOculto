@@ -11,15 +11,15 @@ export const Philosophy: React.FC = () => {
           {/* Visual column: single powerful photograph */}
           <div className="philosophy-media-col">
             <div className="philosophy-image-stack" style={{ display: 'block' }}>
-              <div className="image-stack-primary" style={{ transform: 'none', margin: '0 auto' }}>
+              <div className="image-stack-primary" style={{ transform: 'none', margin: '0 auto', maxWidth: '440px' }}>
                 <img
                   src={SECTIONS_CONFIG.philosophy.photos[0].image}
-                  alt="Chef preparando platillo con ingredientes locales"
+                  alt={SECTIONS_CONFIG.philosophy.photos[0].imageAlt || "Chef Carlos Zárate"}
                   className="stack-img"
                   loading="lazy"
                   width="700"
                   height="850"
-                  style={{ borderRadius: '10px', maxHeight: '480px', objectFit: 'cover', width: '100%' }}
+                  style={{ borderRadius: '10px', width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </div>
             </div>
@@ -39,11 +39,11 @@ export const Philosophy: React.FC = () => {
             <div className="editorial-divider"></div>
 
             <p className="philosophy-lead" style={{ fontSize: '1.05rem', lineHeight: '1.7', color: '#deded7' }}>
-              Catering Oculto nace de la pasión del Chef Carlos Zárate y Karen por compartir la riqueza marina del Mar de Cortés y los frutos de las huertas sudcalifornianas.
+              Catering Oculto nace de la pasión del Chef Carlos Zárate y Karen Ascencio por compartir la riqueza marina del Mar de Cortés y los frutos de las huertas sudcalifornianas.
             </p>
 
             <p style={{ color: '#aab2a7', fontSize: '0.95rem', lineHeight: '1.6', margin: '1rem 0 1.5rem' }}>
-              Cocinamos al momento en tu villa o residencia, adaptando cada servicio al ritmo de tus días con el cuidado, la limpieza y la calidez de un equipo profesional que ama lo que hace.
+              Cocinamos al momento en tu residencia, adaptando cada servicio al ritmo de tus días con el cuidado, la limpieza y la calidez de un equipo profesional que ama lo que hace.
             </p>
 
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#c3ac7c', fontSize: '0.88rem', fontWeight: 600 }}>
