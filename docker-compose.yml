@@ -1,0 +1,19 @@
+# Docker Compose wrapper para producción en VPS
+# Usa los archivos de infra/ para evitar duplicación
+# Uso: docker compose -f docker-compose.yml -f infra/compose.yaml -f infra/compose.shared.yaml up -d
+
+services:
+  # Los servicios se definen en infra/compose.yaml e infra/compose.shared.yaml
+  # Este archivo solo existe como punto de entrada conveniente
+  # No definir servicios aquí para evitar divergencia
+
+# Red externa compartida con platform-proxy (Caddy global)
+networks:
+  edge:
+    external: true
+    name: platform_proxy
+
+# Volúmenes persistentes propios del proyecto
+volumes:
+  catering_db_data:
+  catering_media:
