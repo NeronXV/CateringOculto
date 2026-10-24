@@ -1,5 +1,7 @@
 // Initial content preserves the approved public design.
+import { MAIN_SERVICES } from './mainServices';
 export const SECTIONS_CONFIG = {
+  services: MAIN_SERVICES,
   "gallery": {
     "title": "Platos, manos y mesas",
     "description": "Un vistazo a la estética de nuestros montajes y la textura de nuestras preparaciones.",
@@ -42,7 +44,7 @@ export const SECTIONS_CONFIG = {
       {
         "id": "cena_privada",
         "title": "Cenas Privadas",
-        "subtitle": "Hospitalidad a puerta cerrada en tu villa o residencia",
+        "subtitle": "Hospitalidad a puerta cerrada en tu casa",
         "description": "El formato más íntimo. Diseñamos un menú exclusivo cocinado al momento en tu propio espacio, con montaje de mesa refinado, servicio tiempo a tiempo y maridaje sugerido.",
         "idealFor": "De 4 a 12 comensales · Veladas de pareja, familias y amigos selectos",
         "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
@@ -72,8 +74,8 @@ export const SECTIONS_CONFIG = {
     ]
   },
   "philosophy": {
-    "title": "Cocinar en el desierto frente a la inmensidad del mar",
-    "description": "Nuestra propuesta en Catering Oculto nace de una relación de respeto absoluto con el entorno de Baja California Sur. No creemos en recetas estandarizadas: cocinamos con lo que la marea, la luna y el clima del oasis nos ofrecen en cada jornada.",
+    "title": "Hospitalidad, producto local y técnica de autor",
+    "description": "Catering Oculto nace de la pasión del Chef Carlos Zárate y Karen Ascencio por compartir la riqueza del producto sudcaliforniano.",
     "photos": [
       {
         "image": "/chefcarlos.jpeg",
@@ -96,10 +98,10 @@ export const SECTIONS_CONFIG = {
       },
       {
         "title": "Hospitalidad Cercana y Discreta",
-        "description": "Entendemos que entrar a una residencia o villa ajena exige una discreción pulcra, calidez honesta y el compromiso de dejar tu espacio impecable al término de la velada."
+        "description": "Entendemos que entrar a tu casa exige discreción, calidez y el compromiso de dejar tu espacio impecable al término de la velada."
       }
     ],
-    "teamBio": "Liderado por el Chef Carlos, nuestro equipo reúne a cocineros profesionales apasionados por el producto regional y el servicio hospitalario en La Paz.",
+    "teamBio": "Cocinamos al momento en tu residencia, adaptando cada servicio al ritmo de tus días.",
     "teamNote": "[Espacio reservado para biografía autorizada del chef y trayectoria del equipo previo a lanzamiento]"
   }
 };

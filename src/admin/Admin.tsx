@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { mergeDraft } from './mergeDraft';
+import { useContext, useEffect, useState } from 'react';
+import { AdminRoleContext } from './AuthGate';
 import { ArrowUpRight, BookOpen, Building2, Check, FileText, Globe, MapPin, Save, Sparkles, UtensilsCrossed } from 'lucide-react';
 import {validateCatalog,type Catalog} from './catalog';
 import type { EditorialState } from '../../server/localStore';
@@ -10,7 +12,7 @@ const sections = [
   {id:'service',label:'Precios y contacto',icon:FileText,subtitle:'Impuestos, traslado, condiciones y correo. Aprueba reglas solamente después de confirmarlas con el chef.'},
   {id:'rules',label:'Reglas de cotización',icon:FileText,subtitle:'Anticipación, vigencia y requisitos del lugar. Activa cada aprobación después de confirmarla con el negocio.'},
   {id: 'editorial', label: 'Portada', icon: Sparkles, subtitle: 'La primera impresión de tu cocina.'},
-  {id: 'sections', label: 'Galería y experiencias', icon: BookOpen, subtitle: 'Fotografías, experiencias y filosofía de nuestra cocina.'},
+  {id: 'sections', label: 'Galería y nuestra cocina', icon: BookOpen, subtitle: 'Fotos y textos visibles. Desayuno, Comida y Cena se editan en Menús.'},
   {id: 'business', label: 'Datos del negocio', icon: Building2, subtitle: 'Contacto, identidad y avisos para tus visitantes.'},
   {id: 'packages', label: 'Menús', icon: UtensilsCrossed, subtitle: 'Propuestas, fotografías, platillos e inversión por persona.'},
   {id: 'extras', label: 'Servicios y extras', icon: BookOpen, subtitle: 'Complementos que hacen especial cada evento.'},
@@ -30,6 +32,7 @@ const labels: Record<string, string> = {
   priceCents:'Precio · MXN', unitLabel:'Unidad de cobro', defaultQuantity:'Cantidad inicial', maxQuantity:'Cantidad máxima', travelFeeCents:'Costo de traslado · MXN', requiresConfirmation:'Traslado pendiente de confirmar', notes:'Notas', question:'Pregunta', answer:'Respuesta'
 };
 const hidden = new Set(['id','schemaVersion','aspect','currency','currencySymbol','category','compatibleExtraIds','dependsOnGroup','dependsOnOption']);
+const primarySections = ['service','editorial','sections','business','faqs'];
 type Path = (string | number)[];
 
 function Fields({value, path, onChange}: {value: unknown; path: Path; onChange: (path: Path, value: unknown) => void}) {
@@ -74,6 +77,7 @@ async function request(path: string, body?: unknown): Promise<EditorialState> {
   return data;
 }
 export default function Admin() {
+  const canManageTax = useContext(AdminRoleContext);
   const [state, setState] = useState<EditorialState | null>(null);
   const [draft, setDraft] = useState<Catalog | null>(null);
   const [section, setSection] = useState<keyof Catalog>('editorial');
@@ -95,16 +99,30 @@ export default function Admin() {
       let node = copy as unknown as Record<string | number, unknown>;
       for (const part of path.slice(0,-1)) node = node[part] as Record<string | number, unknown>;
       node[path[path.length-1]] = value;
+      if (path[0] === 'service' && ['taxRateBps','taxOnTravel'].includes(String(path[1]))) copy.service.taxApproved = false;
       copy.packages.forEach(p=>{p.compatibleExtraIds=p.compatibleExtraIds.filter(id=>copy.extras.some(e=>e.id===id));});
       copy.rules.leadTimes=copy.packages.map(p=>copy.rules.leadTimes.find(r=>r.id===p.id) ?? {id:p.id,name:p.name,approved:false,days:1});
       return copy;
     }); setMessage(''); setConfirmPublish(false);
   };
+  useEffect(()=>{
+    const refresh=(event:Event)=>{
+      const {source,state:incoming}=(event as CustomEvent<{source:string;state:EditorialState}>).detail;
+      if(source==='Admin' || !state || !draft)return;
+      const merged=mergeDraft(state.draft,draft,incoming.draft);
+      if(!merged){setError('Otra sección cambió el mismo contenido. Tus cambios se conservan; revisa el borrador antes de volver a guardar.');return;}
+      setState(incoming);setDraft(merged);
+    };
+    window.addEventListener('catalog-updated',refresh);
+    return ()=>window.removeEventListener('catalog-updated',refresh);
+  },[state,draft]);
+
   const act = async (action: 'draft' | 'publish' | 'restore') => {
     setBusy(true);setError('');setMessage('');setConfirmPublish(false);
     try {
       if(action==='draft')validateCatalog(draft);
       const result = await request(action,{revision:state!.revision,...(action === 'draft' ? {draft} : {})});
+      window.dispatchEvent(new CustomEvent('catalog-updated',{detail:{source:'Admin',state:result}}));
       setState(result);setDraft(result.draft);
       setMessage(action === 'draft' ? 'Borrador guardado. La página conserva la versión publicada.' : action === 'publish' ? 'Publicado en la página. Recarga para ver los cambios.' : 'Versión anterior recuperada como borrador. Revísala antes de publicar.');
     } catch(err){setError(err instanceof Error ? err.message : 'No se pudo guardar.');}
@@ -112,7 +130,8 @@ export default function Admin() {
   };
   return <div className="admin-shell">
     <aside className="admin-sidebar"><a className="admin-brand" href="/"><img src="/logo-catering-oculto.png" alt=""/><span>Catering Oculto<small>ESTUDIO DE CONTENIDO</small></span></a>
-      <p className="admin-nav-label">ADMINISTRAR</p><nav aria-label="Secciones de administración">{sections.map(({id,label,icon:Icon})=><button key={id} aria-current={section===id ? 'page' : undefined} onClick={()=>setSection(id)}><Icon size={18}/>{label}</button>)}</nav>
+      <p className="admin-nav-label">ADMINISTRAR</p><nav aria-label="Secciones de administración">{sections.filter(s=>primarySections.includes(s.id)).map(({id,label,icon:Icon})=><button key={id} aria-current={section===id ? 'page' : undefined} onClick={()=>setSection(id)}><Icon size={18}/>{label}</button>)}</nav>
+      <details className="admin-history"><summary>Opciones avanzadas</summary><p>Catálogo anterior, extras y reglas. Se conservan para uso interno y el flujo anterior; no activan secciones en la página actual.</p><nav aria-label="Opciones avanzadas">{sections.filter(s=>!primarySections.includes(s.id)).map(({id,label})=><button key={id} onClick={()=>setSection(id)} aria-current={section===id?'page':undefined}>{label}</button>)}</nav></details>
       <div className="admin-local"><span/> Panel privado<p>Guarda y revisa tu borrador. Publicar actualiza la página para todos los visitantes.</p></div>
       <a className="admin-site-link" href="/" target="_blank" rel="noreferrer">Ver página publicada <ArrowUpRight size={17}/></a>
     </aside>
@@ -123,7 +142,29 @@ export default function Admin() {
       {state && draft ? <form onSubmit={e=>{e.preventDefault();void act('draft');}}>
         <details className="admin-history"><summary>Contenido recibido del cliente</summary><p>Cargar el Word como borrador reemplaza menús, extras, zonas, preguntas y condiciones del borrador. IVA y traslado quedan pendientes; las cenas conservan precio por confirmar.</p><button type="button" className="admin-secondary" disabled={busy} onClick={()=>{if(window.confirm('¿Preparar el catálogo del documento en el borrador? Revisa los cambios antes de guardar o publicar.')){setDraft(clientCatalog(draft));setConfirmPublish(false);setMessage('Documento preparado como borrador. Revisa precios, fotografías y reglas.');}}}>Cargar menús del documento</button></details>
         <div className="admin-editor"><div className="admin-editor-title"><h2>Contenido de {current.label.toLowerCase()}</h2><span>Revisión {state.revision}</span></div>
-          <fieldset disabled={busy} className="admin-inputs"><Fields value={draft[section]} path={[section]} onChange={change}/></fieldset>
+          <fieldset disabled={busy} className="admin-inputs">{section==='service' ? <>
+            <section className="admin-item admin-tax-settings" aria-label="Configuración de IVA">
+              <h3>IVA</h3>
+              <p role="status">{draft.service.taxApproved ? 'Aplicación aprobada en este borrador.' : 'Aplicación desactivada en este borrador.'} Guardar no cambia la página; publicar aplica la configuración.</p>
+              <p>16% propuesto. Confirma precios antes de IVA y aprobación comercial y fiscal. La regla es global: no permite exenciones por menú.</p>
+              {!canManageTax && <p>Solo Admin puede modificar, aprobar o publicar cambios de IVA.</p>}
+              <fieldset disabled={!canManageTax} className="admin-inputs">
+                <Fields value={draft.service.taxRateBps} path={['service','taxRateBps']} onChange={change}/>
+                {!draft.service.taxApproved && draft.service.taxRateBps !== 1600 && <button type="button" className="admin-secondary" onClick={()=>change(['service','taxRateBps'],1600)}>Proponer 16% sin activar</button>}
+                <Fields value={draft.service.taxOnTravel} path={['service','taxOnTravel']} onChange={change}/>
+                <p>Traslado del itinerario: por confirmar. Cambiar tasa o traslado desactiva la aprobación.</p>
+                <Fields value={draft.service.taxApproved} path={['service','taxApproved']} onChange={change}/>
+              </fieldset>
+              <p>Solo afecta estimados nuevos. Solicitudes y propuestas guardadas conservan sus condiciones e importes.</p>
+            </section>
+            <Fields value={Object.fromEntries(Object.entries(draft.service).filter(([key])=>!['taxApproved','taxRateBps','taxOnTravel'].includes(key)))} path={['service']} onChange={change}/>
+          </> : section==='sections' ? <>
+            <Fields value={{gallery:{title:draft.sections.gallery.title,description:draft.sections.gallery.description,items:draft.sections.gallery.items},philosophy:{title:draft.sections.philosophy.title,description:draft.sections.philosophy.description,photos:[draft.sections.philosophy.photos[0]],teamBio:draft.sections.philosophy.teamBio}}} path={['sections']} onChange={change}/>
+            <details className="admin-history"><summary>Contenido conservado del diseño anterior</summary><p>Estos campos no aparecen en la página simplificada.</p><Fields value={{experiences:draft.sections.experiences,philosophy:{photoNote:draft.sections.philosophy.photoNote,pillars:draft.sections.philosophy.pillars,teamNote:draft.sections.philosophy.teamNote},gallery:{notice:draft.sections.gallery.notice}}} path={['sections']} onChange={change}/><Fields value={draft.sections.philosophy.photos[1]} path={['sections','philosophy','photos',1]} onChange={change}/></details>
+          </> : section==='business' ? <>
+            <Fields value={{brandName:draft.business.brandName,tagline:draft.business.tagline,location:draft.business.location,region:draft.business.region,whatsAppPhoneDisplay:draft.business.whatsAppPhoneDisplay,whatsAppNumberDigits:draft.business.whatsAppNumberDigits,socialLinks:draft.business.socialLinks}} path={['business']} onChange={change}/>
+            <details className="admin-history"><summary>Avisos del cotizador anterior</summary><p>Se conservan para el flujo anterior; no sustituyen las preguntas de la página actual.</p><Fields value={{quoteDisclaimer:draft.business.quoteDisclaimer,taxNotice:draft.business.taxNotice,demoNotice:draft.business.demoNotice}} path={['business']} onChange={change}/></details>
+          </> : <Fields value={draft[section]} path={[section]} onChange={change}/>}</fieldset>
           {section==='packages' && <section className="admin-item"><h3>Complementos disponibles por menú</h3>{draft.packages.map((pkg,i)=><fieldset key={pkg.id}><legend>{pkg.name}</legend>{draft.extras.length?draft.extras.map(extra=><label key={extra.id} className="admin-check"><input type="checkbox" checked={pkg.compatibleExtraIds.includes(extra.id)} onChange={e=>change(['packages',i,'compatibleExtraIds'],e.target.checked?[...pkg.compatibleExtraIds,extra.id]:pkg.compatibleExtraIds.filter(id=>id!==extra.id))}/>{extra.name}</label>):<p>Añade complementos en Servicios y extras para ofrecerlos aquí.</p>}</fieldset>)}</section>}
         </div>
         <footer className="admin-actions"><div><strong>{dirty ? 'Tienes cambios pendientes' : 'Borrador guardado'}</strong><small>{state.publishedAt ? `Última publicación: ${new Date(state.publishedAt).toLocaleString('es-MX')}` : 'Catálogo inicial de demostración'}</small></div>

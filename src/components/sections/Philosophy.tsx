@@ -33,17 +33,17 @@ export const Philosophy: React.FC = () => {
             </div>
 
             <h2 id="cocina-heading" className="section-title">
-              Hospitalidad, producto local y técnica de autor
+              {SECTIONS_CONFIG.philosophy.title}
             </h2>
 
             <div className="editorial-divider"></div>
 
             <p className="philosophy-lead" style={{ fontSize: '1.05rem', lineHeight: '1.7', color: '#deded7' }}>
-              Catering Oculto nace de la pasión del Chef Carlos Zárate y Karen Ascencio por compartir la riqueza marina del Mar de Cortés y los frutos de las huertas sudcalifornianas.
+              {SECTIONS_CONFIG.philosophy.description}
             </p>
 
             <p style={{ color: '#aab2a7', fontSize: '0.95rem', lineHeight: '1.6', margin: '1rem 0 1.5rem' }}>
-              Cocinamos al momento en tu residencia, adaptando cada servicio al ritmo de tus días con el cuidado, la limpieza y la calidez de un equipo profesional que ama lo que hace.
+              {SECTIONS_CONFIG.philosophy.teamBio}
             </p>
 
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#c3ac7c', fontSize: '0.88rem', fontWeight: 600 }}>

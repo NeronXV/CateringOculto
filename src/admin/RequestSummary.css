@@ -1,0 +1,20 @@
+.request-summary { color:inherit; overflow-wrap:anywhere; }
+.request-summary h3 { margin:0 0 16px; }
+.request-day { margin:0 0 16px; border:1px solid #665b40; border-radius:10px; padding:16px; }
+.request-day h4 { margin:0 0 12px; color:#e6cca0; font-size:14px; text-transform:capitalize; }
+.request-service + .request-service { margin-top:16px; padding-top:16px; border-top:1px solid #454234; }
+.request-service-heading { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+.request-service-heading span,.request-service li span { color:#b8b6aa; }
+.request-service p { margin:8px 0; }
+.request-summary ul { padding-left:18px; margin:10px 0; }
+.request-summary li { margin:6px 0; line-height:1.5; }
+.request-service-price { color:#e6cca0; margin-top:12px; }
+.request-service-price small { display:block; color:#b8b6aa; margin-top:4px; }
+.request-estimate { margin-top:24px; }
+.request-subtotal { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; font-size:16px; }
+.request-subtotal strong { color:#e6cca0; font-size:21px; }
+.request-pending { display:block; margin-top:20px; color:#e6cca0; }
+.request-disclaimer { color:#b8b6aa; font-size:13px; line-height:1.6; }
+.request-origin { padding:20px 24px; border-bottom:1px solid #454234; }
+.request-origin summary { cursor:pointer; color:#e6cca0; min-height:44px; display:flex; align-items:center; }
+.request-origin .request-summary { padding-top:16px; }

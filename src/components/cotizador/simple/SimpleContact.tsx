@@ -5,14 +5,16 @@ interface SimpleContactProps {
   name: string;
   phone: string;
   notes: string;
+  dietary: string;
   errors: Record<string, string>;
-  onChangeField: (field: 'name' | 'phone' | 'notes', value: string) => void;
+  onChangeField: (field: 'name' | 'phone' | 'notes' | 'dietary', value: string) => void;
 }
 
 export const SimpleContact: React.FC<SimpleContactProps> = ({
   name,
   phone,
   notes,
+  dietary,
   errors,
   onChangeField
 }) => {
@@ -20,9 +22,9 @@ export const SimpleContact: React.FC<SimpleContactProps> = ({
     <div className="simple-contact">
       <div className="simple-step-header">
         <span className="simple-step-tag">Paso 4</span>
-        <h3 className="simple-step-title">¿A nombre de quién preparamos la propuesta?</h3>
+        <h3 className="simple-step-title">Enviar solicitud</h3>
         <p className="simple-step-desc">
-          Solo necesitamos tus datos de contacto básicos para enviarte la propuesta y coordinar contigo por WhatsApp.
+          Carlos y Karen revisarán tu solicitud y acordarán contigo los detalles por WhatsApp.
         </p>
       </div>
 
@@ -69,19 +71,25 @@ export const SimpleContact: React.FC<SimpleContactProps> = ({
         </div>
 
         <div className="simple-field-group">
+          <label htmlFor="simple-contact-dietary" className="simple-field-label">Alergias o restricciones alimentarias (opcional)</label>
+          <textarea id="simple-contact-dietary" className="simple-textarea" value={dietary} maxLength={2000} rows={2} placeholder="El chef revisará contigo si puede atenderlas." onChange={e=>onChangeField('dietary',e.target.value)}/>
+        </div>
+        <div className="simple-field-group">
           <label htmlFor="simple-contact-notes" className="simple-field-label">
             <MessageSquare size={15} />
-            <span>Notas, alergias o preferencias (opcional)</span>
+            <span>Otras notas o preferencias (opcional)</span>
           </label>
           <textarea
             id="simple-contact-notes"
             className="simple-textarea"
             rows={3}
-            placeholder="Ej. Algunos invitados no comen mariscos; nos gustaría enfocar las cenas en cortes y pesca fresca..."
+            placeholder="Ej. Nos gustaría comer a las dos de la tarde."
+            aria-describedby="simple-contact-notes-hint"
             value={notes}
             maxLength={1000}
             onChange={e => onChangeField('notes', e.target.value)}
           />
+          <p id="simple-contact-notes-hint" className="simple-field-hint">Si organizas una boda, te interesan paellas u otro servicio especial, cuéntanos aquí. El equipo confirmará opciones y presupuesto.</p>
         </div>
       </div>
     </div>

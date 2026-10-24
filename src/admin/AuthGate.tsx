@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { createContext, useEffect, useState, type ReactNode } from 'react';
 import './Admin.css';
 import Inbox from './Inbox';
 import Users from './Users';
@@ -7,6 +7,7 @@ import ChefMenus from './ChefMenus';
 
 interface User { name: string; email: string; role: string; }
 interface Status { setupRequired: boolean; setupDisabled?: boolean; user: User | null; }
+export const AdminRoleContext = createContext(false);
 
 async function api(path: string, body?: unknown) {
   const response = await fetch(`/api/local-editor/${path}`, body ? {
@@ -28,7 +29,7 @@ export default function AuthGate({ children }: { children: ReactNode }) {
   // VISTA POR DEFECTO: Solicitudes (no Contenido)
   const [view, setView] = useState<'inbox' | 'events' | 'menus' | 'settings'>('inbox');
   const [settingsTab, setSettingsTab] = useState<'content' | 'users'>('content');
-  const [eventQuote, setEventQuote] = useState<string | null>(null);
+  const [eventRequest, setEventRequest] = useState<{id:string;key:number} | null>(null);
 
   const checkAccess = async () => {
     setBusy(true);
@@ -124,12 +125,12 @@ export default function AuthGate({ children }: { children: ReactNode }) {
 
         {/* 1. SOLICITUDES (Pantalla principal) */}
         <div hidden={view !== 'inbox'}>
-          <Inbox onEvent={id => { setEventQuote(id); setView('events'); }} />
+          <Inbox active={view==='inbox'} onEvent={id => { setEventRequest(previous=>({id,key:(previous?.key ?? 0)+1})); setView('events'); }} />
         </div>
 
         {/* 2. AGENDA */}
         <div hidden={view !== 'events'}>
-          <Operations quoteId={eventQuote} />
+          <Operations quoteId={eventRequest?.id ?? null} requestKey={eventRequest?.key} />
         </div>
 
         {/* 3. MENÚS DE LA COCINA */}
@@ -138,8 +139,8 @@ export default function AuthGate({ children }: { children: ReactNode }) {
         </div>
 
         {/* 4. CONFIGURACIÓN (Textos web, zonas, impuestos y usuarios) */}
-        {view === 'settings' && (
-          <div className="settings-wrapper">
+        {(
+          <div className="settings-wrapper" hidden={view !== 'settings'}>
             {isAdmin && (
               <div className="settings-subnav-bar">
                 <button
@@ -159,15 +160,14 @@ export default function AuthGate({ children }: { children: ReactNode }) {
               </div>
             )}
 
-            {settingsTab === 'users' && isAdmin ? (
+            {settingsTab === 'users' && isAdmin && (
               <Users onAccessChange={async () => {
                 const next = await api('auth/status');
                 setStatus(next);
                 if (next.user?.role !== 'admin') setSettingsTab('content');
               }} />
-            ) : (
-              <div>{children}</div>
             )}
+            <div hidden={settingsTab === 'users' && isAdmin}><AdminRoleContext.Provider value={isAdmin}>{children}</AdminRoleContext.Provider></div>
           </div>
         )}
       </div>

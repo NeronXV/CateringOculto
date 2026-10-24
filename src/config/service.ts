@@ -13,7 +13,8 @@ export interface ServiceSettings {
   depositPercent:number;
   balanceDays:number;
 }
-export const SERVICE_SETTINGS:ServiceSettings={pricesApproved:false,taxApproved:false,taxRateBps:0,taxOnTravel:false,
+// Proposed rate only. Applying tax still requires explicit approval and publication.
+export const SERVICE_SETTINGS:ServiceSettings={pricesApproved:false,taxApproved:false,taxRateBps:1600,taxOnTravel:false,
   travelMode:'zones',travelApproved:false,travelBlockGuests:20,travelBlockCents:500000,contactEmail:'',
   conditions:'La fecha y las condiciones finales deben confirmarse con el equipo. La cotización no reserva el evento.',
   conditionsVersion:'pendiente-v1',depositPercent:50,balanceDays:15};

@@ -2,6 +2,8 @@ import type {QuoteReceipt} from '../types/quote';
 import type {ItineraryReceipt} from '../types/itinerary';
 import {MEAL_LABELS} from '../types/itinerary';
 import {formatEventDate, formatMXNCents} from './formatters';
+import {itineraryPresentation} from './itineraryPresentation';
+import {visibleFolio} from './folio';
 
 export function itineraryWhatsAppMessage(receipt: ItineraryReceipt): string {
   const {estimate: e, contact: c} = receipt;
@@ -36,7 +38,7 @@ export function itineraryWhatsAppMessage(receipt: ItineraryReceipt): string {
     lines.push('');
   }
 
-  lines.push(`Folio: *${receipt.folio}*`);
+  lines.push(`Folio: *${visibleFolio(receipt.folio)}*`);
   lines.push('');
   lines.push('_Quedo atento a su respuesta para conocer disponibilidad y detalles. ¡Muchas gracias!_');
 
@@ -48,7 +50,7 @@ export function receiptText(receipt: QuoteReceipt | ItineraryReceipt): string {
     const itinerary = receipt as ItineraryReceipt;
     const {estimate: e, contact: c} = itinerary;
     const lines: string[] = [
-      `SOLICITUD CATERING OCULTO · ${receipt.folio}`,
+      `SOLICITUD CATERING OCULTO · ${visibleFolio(receipt.folio)}`,
       `Fecha de emisión: ${receipt.createdAt}`,
       `Cliente: ${c?.name ?? 'Visitante'}`,
       `Teléfono: ${c?.phone ?? 'Registrado en la solicitud'}`,
@@ -58,9 +60,18 @@ export function receiptText(receipt: QuoteReceipt | ItineraryReceipt): string {
 
     for (const day of e.selection.days) {
       lines.push(`  • ${day.date}: ${day.services.map(s => MEAL_LABELS[s]).join(' · ')}`);
+      if (e.pricing) for (const item of e.pricing.lines.filter(line => line.date === day.date)) {
+        lines.push(`    ${item.requestedTime} · ${item.menuName}: ${item.subtotalCents === null ? 'Precio por confirmar' : formatMXNCents(item.subtotalCents)}`);
+      }
     }
 
-    lines.push('Presupuesto: Por confirmar con el chef (itinerario personalizado)');
+    if (e.pricing) {
+      const summary = itineraryPresentation(e);
+      lines.push(...summary.rows.map(row => `${row.label}: ${row.value}`), summary.note);
+      lines.push(...summary.pending.map(text => `Por cotizar o confirmar: ${text}`));
+      if (summary.extrasNote) lines.push(summary.extrasNote);
+      lines.push('Estimado sujeto a confirmación de disponibilidad y propuesta final del chef.');
+    } else lines.push('Presupuesto: Por confirmar con el chef (itinerario personalizado)');
     if (c?.dietaryRestrictions) lines.push(`Restricciones a revisar: ${c.dietaryRestrictions}`);
     if (c?.additionalNotes) lines.push(`Notas: ${c.additionalNotes}`);
     for (const p of e.pending) lines.push(`Pendiente / condición: ${p}`);
@@ -71,7 +82,7 @@ export function receiptText(receipt: QuoteReceipt | ItineraryReceipt): string {
 
   const legacy = receipt as QuoteReceipt;
   const {estimate:e,contact:c}=legacy,b=e.breakdown;
-  return [`SOLICITUD CATERING OCULTO · ${receipt.folio}`,
+  return [`SOLICITUD CATERING OCULTO · ${visibleFolio(receipt.folio)}`,
     `Fecha de emisión: ${receipt.createdAt}`,`Cliente: ${c?.name ?? 'Visitante'}`,`Teléfono: ${c?.phone ?? 'Registrado en la solicitud'}`,
     `Evento: ${e.selection.eventDate} · ${e.selection.guestsCount} invitados`,
     `Zona: ${b.selectedZone?.name ?? e.selection.zoneId}`,`Menú: ${b.selectedPackage?.name ?? e.selection.packageId}`,

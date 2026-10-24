@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import {visibleFolio} from '../../utils/folio';
 import type { QuoteConfigState } from '../../types';
 import { quoteSelection, type QuoteReceipt, type ServerEstimate } from '../../types/quote';
 import { formatMXNCents } from '../../utils/formatters';
@@ -60,7 +61,7 @@ export function ServerRequest({state,ready,onIncomplete}:{state:QuoteConfigState
   const message=saved?receiptText(saved):'';
   const wa=saved ? `https://wa.me/${BUSINESS_CONFIG.whatsAppNumberDigits}?text=${encodeURIComponent(message)}` : '';
   const email=saved?.estimate.serviceSnapshot?.contactEmail || SERVICE_SETTINGS.contactEmail;
-  const mail=saved && email?`mailto:${email}?subject=${encodeURIComponent(`Solicitud ${saved.folio} · Catering Oculto`)}&body=${encodeURIComponent(message)}`:'';
+  const mail=saved && email?`mailto:${email}?subject=${encodeURIComponent(`Solicitud ${visibleFolio(saved.folio)} · Catering Oculto`)}&body=${encodeURIComponent(message)}`:'';
   return <div className="server-request">
     <p className="field-hint">Tu solicitud llegará a la bandeja del equipo. Después podrás compartir el resumen por WhatsApp o correo. No confirma una reserva.</p>
     {!saved && <>
@@ -86,6 +87,6 @@ export function ServerRequest({state,ready,onIncomplete}:{state:QuoteConfigState
       </div>}
     </>}
     {error && <p className="field-error-msg" role="alert">{error}</p>}
-    {saved && <div className="server-estimate" role="status"><h4>Solicitud guardada</h4><p className="request-folio">Folio: <strong>{saved.folio}</strong></p><p>{saved.estimate.estimateStatus==='partial'?'Importe parcial conocido':'Total estimado'}: {formatMXNCents(saved.estimate.breakdown.totalEstimatedCents)} MXN. Conserva tu folio; la disponibilidad sigue pendiente.</p><p>{saved.estimate.selection.eventDate} · {saved.estimate.selection.guestsCount} invitados · {saved.estimate.breakdown.selectedPackage?.name}</p>{receipt.key!==formKey && <p>Has cambiado el formulario. Este folio conserva la configuración enviada.</p>}<Receipt receipt={saved}/><a className="btn btn-whatsapp" target="_blank" rel="noopener noreferrer" href={wa}>Enviar resumen por WhatsApp</a>{mail && <a className="btn btn-secondary" href={mail}>Abrir correo con mi presupuesto</a>}<p className="field-hint">WhatsApp y correo se abren con el resumen preparado. Debes confirmar el envío en tu aplicación; la solicitud ya está guardada en la bandeja del equipo.</p><button className="btn btn-secondary" type="button" onClick={()=>{setReceipt(null);setEstimate(null);setAccepted('');attempt.current=null;}}>Preparar otra solicitud</button></div>}
+    {saved && <div className="server-estimate" role="status"><h4>Solicitud guardada</h4><p className="request-folio">Folio: <strong>{visibleFolio(saved.folio)}</strong></p><p>{saved.estimate.estimateStatus==='partial'?'Importe parcial conocido':'Total estimado'}: {formatMXNCents(saved.estimate.breakdown.totalEstimatedCents)} MXN. Conserva tu folio; la disponibilidad sigue pendiente.</p><p>{saved.estimate.selection.eventDate} · {saved.estimate.selection.guestsCount} invitados · {saved.estimate.breakdown.selectedPackage?.name}</p>{receipt.key!==formKey && <p>Has cambiado el formulario. Este folio conserva la configuración enviada.</p>}<Receipt receipt={saved}/><a className="btn btn-whatsapp" target="_blank" rel="noopener noreferrer" href={wa}>Enviar resumen por WhatsApp</a>{mail && <a className="btn btn-secondary" href={mail}>Abrir correo con mi presupuesto</a>}<p className="field-hint">WhatsApp y correo se abren con el resumen preparado. Debes confirmar el envío en tu aplicación; la solicitud ya está guardada en la bandeja del equipo.</p><button className="btn btn-secondary" type="button" onClick={()=>{setReceipt(null);setEstimate(null);setAccepted('');attempt.current=null;}}>Preparar otra solicitud</button></div>}
   </div>;
 }

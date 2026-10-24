@@ -1,3 +1,4 @@
+import {blankEvent} from '../src/types/operations';
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
 import { once } from 'node:events';
@@ -16,6 +17,8 @@ import { testInbox } from './inbox';
 import {testOperations} from './operations';
 import {testUserRoles} from './userRoles';
 import {testPremiumIntegration} from './premiumIntegration';
+import {testAvailability} from './availability';
+import {jsonDocument} from '../server/jsonDocument';
 
 // HTTP/auth contract tests with a fake SQL adapter. Not MariaDB integration.
 const users: Array<{id:number;email:string;name:string;password_hash:string;role:string;active:boolean}>=[];
@@ -60,6 +63,16 @@ if(integration) {
   const [afterRoles]=await realPool.query<any[]>('SELECT id,email,name,password_hash,role,active FROM staff_users ORDER BY id');
   assert.deepEqual(afterRoles,beforeRoles.map(row=>({...row,role:row.role==='owner'?'admin':'editor'})));
   for(const sql of readFileSync('server/migrations/005-operations.sql','utf8').split(';').map(s=>s.trim()).filter(Boolean))await realPool.query(sql);
+  const legacyEventId='11111111-1111-4111-8111-111111111111';
+  const legacyEvent={...blankEvent('2098-04-12'),name:'Ficha anterior de prueba'};
+  await realPool.execute('INSERT INTO service_events (id,folio,event_date,status,document,updated_at) VALUES (?,?,?,?,?,?)',[legacyEventId,'EV-MIGRATION','2098-04-12','draft',JSON.stringify(legacyEvent),new Date().toISOString()]);
+  for(const sql of readFileSync('server/migrations/006-event-dates.sql','utf8').split(';').map(s=>s.trim()).filter(Boolean))await realPool.query(sql);
+  for(const sql of readFileSync('server/migrations/007-request-availability.sql','utf8').split(';').map(s=>s.trim()).filter(Boolean))await realPool.query(sql);
+  const [backfilled]=await realPool.query<any[]>("SELECT DATE_FORMAT(service_date,'%Y-%m-%d') AS day FROM service_event_dates WHERE event_id='11111111-1111-4111-8111-111111111111'");
+  assert.deepEqual(backfilled.map(r=>r.day),['2098-04-12']);
+  const [preserved]=await realPool.execute<any[]>('SELECT document FROM service_events WHERE id=?',[legacyEventId]);
+  assert.deepEqual(jsonDocument(preserved[0].document),legacyEvent);
+  await realPool.execute('DELETE FROM service_events WHERE id=?',[legacyEventId]);
   await realPool.query('DELETE FROM staff_users');await realPool.query('ALTER TABLE staff_users AUTO_INCREMENT=1');
   await realPool.execute('INSERT INTO editorial_state (id,revision,document) VALUES (1,0,?)',[document]);
 }
@@ -135,14 +148,21 @@ try {
     await testInbox(realPool,request,ownerCookie,editor,sales);
     await testPremiumIntegration(realPool,request,ownerCookie);
     await testOperations(realPool,request,ownerCookie,editor);
+    await testAvailability(realPool,request,ownerCookie,editor);
     await testUserRoles(realPool,request,ownerCookie,editor,sales);
     await realPool.execute('UPDATE staff_users SET active=FALSE WHERE id=2');
     await realPool.execute('UPDATE staff_sessions SET expires_at=0 WHERE JSON_EXTRACT(document,\'$.userId\')=3');
   } else {
+    users[1].role='reader';
+    for(const path of ['/inbox','/inbox/settings','/events/calendar?month=2099-01','/events?month=2099-01','/events/prepare/00000000-0000-0000-0000-000000000000'])assert.equal((await request(path,undefined,editor)).status,403);
+    for(const path of ['/inbox/00000000-0000-0000-0000-000000000000/availability','/inbox/00000000-0000-0000-0000-000000000000/link','/inbox/settings'])assert.equal((await request(path,{},editor)).status,403);
+    assert.equal((await request('/events',{data:{},quoteId:null},editor)).status,403);
+    users[1].role='editor';
     users[1].active=false;
     const session=[...sessions.values()].find(s=>JSON.parse(s.document).userId===3)!;session.expires=Date.now()-1;
   }
   assert.equal((await request('/state',undefined,editor)).status,401);
+  assert.equal((await request('/events?month=2099-01',undefined,editor)).status,401);
   assert.equal((await request('/state',undefined,sales)).status,401);
   assert.equal((await request('/auth/logout',{},ownerCookie)).status,200);
   assert.equal((await request('/state',undefined,ownerCookie)).status,401);

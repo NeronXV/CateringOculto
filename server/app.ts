@@ -8,7 +8,13 @@ export async function application(pool:Pool,secret:string,mediaDirectory:string,
   app.get('/health/live',(_req,res)=>res.json({ok:true}));
   app.get('/health/ready',async(_req,res)=>{
     res.setHeader('Cache-Control','no-store');
-    try {await pool.query('SELECT id FROM editorial_state WHERE id=1');res.json({ok:true});}catch{res.status(503).json({ok:false});}
+    try {
+      const [state]=await pool.query<any[]>('SELECT response_hours FROM editorial_state WHERE id=1');
+      if(state.length!==1)throw Error('State missing.');
+      await pool.query('SELECT availability_status,availability_document,tracking_hash FROM quote_followup LIMIT 0');
+      await pool.query('SELECT service_date FROM service_event_dates LIMIT 0');
+      res.json({ok:true});
+    }catch{res.status(503).json({ok:false});}
   });
   // Keep this prefix to preserve existing media URLs and clients.
   app.use('/api/local-editor',await authApp(pool,secret,mediaDirectory,options));

@@ -4,7 +4,7 @@ export const EVENT_TYPES: EventTypeOption[] = [
   {
     id: 'cena_privada',
     name: 'Cena Privada',
-    shortDescription: 'Servicio exclusivo en residencia, villa o terraza privada con atención personalizada.',
+    shortDescription: 'Servicio exclusivo en tu casa o terraza privada con atención personalizada.',
     tagline: 'Veladas íntimas diseñadas a la medida de los comensales.',
     recommendedGuestsMin: 4
   },

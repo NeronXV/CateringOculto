@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
             <span className="footer-logo-title">{BUSINESS_CONFIG.brandName}</span>
             <p className="footer-tagline">Chef Carlos Zárate & Karen Ascencio</p>
             <p className="footer-bio">
-              Chef privado y catering en villas, residencias y alojamientos de La Paz y Baja California Sur.
+              {BUSINESS_CONFIG.tagline}
             </p>
             
             <div className="footer-location-badge">

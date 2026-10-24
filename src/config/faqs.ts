@@ -4,35 +4,26 @@ export interface FaqItem {
   category: 'reserva' | 'cocina' | 'logistica' | 'politicas';
 }
 
+// Initial wording only. Existing published questions remain owned by the editor.
 export const FAQS_CONFIG: FaqItem[] = [
   {
     category: 'reserva',
-    question: '¿Con cuánta anticipación debo solicitar mi experiencia?',
-    answer: 'Para cenas privadas íntimas recomendamos al menos 4 a 7 días de anticipación. Para celebraciones de más de 12 personas o fechas en temporada alta (noviembre a mayo), sugerimos consultar disponibilidad con 2 a 4 semanas de antelación. En ocasiones podemos atender solicitudes con menor margen según la agenda del equipo.'
-  },
-  {
-    category: 'reserva',
-    question: '¿El cotizador web confirma mi fecha o servicio?',
-    answer: 'No. El cotizador genera un presupuesto estimativo transparente para que conozcas los rangos de inversión. Al hacer clic en "Consultar disponibilidad por WhatsApp", se prepara un mensaje con tu configuración para que nuestro equipo valide personalmente la agenda, los requerimientos de la cocina y el precio final antes de cualquier compromiso.'
+    question: '¿La solicitud confirma mis fechas?',
+    answer: 'No. Carlos y Karen revisan la disponibilidad y acuerdan contigo el menú, precio y condiciones por WhatsApp. La solicitud no reserva ni genera un cobro.'
   },
   {
     category: 'cocina',
-    question: '¿Pueden adaptar los menús a alergias o restricciones alimentarias?',
-    answer: 'Completamente. Toda la propuesta se cocina sobre pedido. Si entre tus invitados hay personas celíacas, vegetarianas, con intolerancia a mariscos, frutos secos o lácteos, diseñamos alternativas específicas respetando la misma calidad y cuidado técnico.'
+    question: '¿Puedo indicar alergias o preferencias?',
+    answer: 'Sí. Inclúyelas en tu solicitud para que el chef revise ingredientes, preparación y viabilidad contigo antes de acordar el servicio.'
   },
   {
-    category: 'logistica',
-    question: '¿Qué equipamiento necesitan en la casa, villa o locación?',
-    answer: 'Solo requerimos acceso a una cocina funcional con refrigeración básica, fuente de calor y agua potable corriente. Si el evento es al aire libre o en un espacio sin cocina equipada, el Chef Carlos puede coordinar estaciones móviles de asador o inducción (sujeto a previa inspección técnica).'
-  },
-  {
-    category: 'politicas',
-    question: '¿Cuáles son las políticas de anticipo y cancelación?',
-    answer: 'Información sujeta a confirmación directa: Por lo general, se solicita un anticipo del 50% al formalizar la reserva para asegurar la fecha y realizar la compra anticipada de ingredientes frescos y pesca de anzuelo. El saldo restante se liquida el día del evento. Las condiciones específicas de reembolso o reprogramación se entregan por escrito con la cotización formal.'
+    category: 'reserva',
+    question: '¿Puedo pedir distintos servicios en varios días?',
+    answer: 'Sí. Selecciona solo las fechas en que necesitas servicio y marca desayuno, comida o cena para cada día. Las fechas pueden ser no consecutivas.'
   },
   {
     category: 'politicas',
-    question: '¿Los precios mostrados en el cotizador incluyen impuestos?',
-    answer: 'Condición fiscal pendiente de definir: Los importes mostrados son una base estimada antes de impuestos (IVA). Si requieres factura fiscal mexicana, indícalo en tus comentarios para incorporar el desglose correspondiente en la propuesta definitiva.'
+    question: '¿Cómo conozco el precio?',
+    answer: 'La solicitud muestra referencias aprobadas cuando están disponibles. Los importes pendientes aparecen por confirmar; el chef acuerda contigo el precio final, impuestos y traslado antes de contratar.'
   }
 ];

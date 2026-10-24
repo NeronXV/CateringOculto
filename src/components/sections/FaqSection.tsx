@@ -1,27 +1,10 @@
+import { FAQS_CONFIG } from '../../config/faqs';
 import React, { useState } from 'react';
 import { Sparkles, ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
 import './FaqSection.css';
 
-const ESSENTIAL_FAQS = [
-  {
-    question: '¿Con cuánta anticipación debo reservar?',
-    answer: 'Recomendamos solicitar tu fecha con al menos 3 a 7 días de anticipación para estancias cortas y cenas privadas, y con 2 a 4 semanas para grupos grandes o temporada alta. Siempre puedes consultar disponibilidad de último momento por WhatsApp.'
-  },
-  {
-    question: '¿Pueden atender alergias o restricciones alimentarias?',
-    answer: 'Completamente. Toda la cocina se prepara al momento exclusivamente para tu grupo. Diseñamos alternativas cuidadas para comensales celíacos, vegetarianos, veganos o con alergias a mariscos, frutos secos y lácteos.'
-  },
-  {
-    question: '¿La solicitud en la página confirma automáticamente mi fecha?',
-    answer: 'No. La solicitud nos permite conocer tus fechas, comensales y servicios deseados. Carlos y Karen Ascencio revisan personalmente la agenda y te contactan de inmediato por WhatsApp para confirmar disponibilidad antes de cualquier anticipo.'
-  },
-  {
-    question: '¿Ofrecen servicio fuera de La Paz?',
-    answer: 'Sí. Además de La Paz, atendemos residencias y villas en Cerritos, Todos Santos, El Triunfo y zonas aledañas en Baja California Sur (sujeto a logística previa).'
-  }
-];
-
 export const FaqSection: React.FC = () => {
+  const [showAll, setShowAll] = useState(false);
   const [openIndices, setOpenIndices] = useState<number[]>([0]);
 
   const toggleFaq = (index: number) => {
@@ -47,7 +30,7 @@ export const FaqSection: React.FC = () => {
         </div>
 
         <div className="faq-list">
-          {ESSENTIAL_FAQS.map((faq, idx) => {
+          {(showAll ? FAQS_CONFIG : FAQS_CONFIG.slice(0,4)).map((faq, idx) => {
             const isOpen = openIndices.includes(idx);
 
             return (
@@ -79,6 +62,7 @@ export const FaqSection: React.FC = () => {
             );
           })}
         </div>
+        {FAQS_CONFIG.length>4 && <button type="button" className="btn btn-secondary" aria-expanded={showAll} onClick={()=>setShowAll(!showAll)}>{showAll?'Ver menos preguntas':'Más preguntas'}</button>}
       </div>
     </section>
   );

@@ -411,3 +411,34 @@
     padding: 16px 12px 70px;
   }
 }
+
+.event-dates-editor { grid-column:1/-1; min-width:0; }
+.event-date-row { display:flex; flex-wrap:wrap; gap:0.5rem; align-items:end; margin:0.5rem 0; }
+.event-date-row label { flex:1; min-width:150px; }
+.op-section-box summary { cursor:pointer; font-weight:600; padding:0.4rem 0; }
+
+.event-dates-editor p { color:#5c695c; }
+.operations form > fieldset { border:0; padding:0; min-width:0; }
+
+.operations { background:#191b16; color:#eeeade; color-scheme:dark; }
+.operations :is(.calendar-card-wrap,.event-card,.operations-form-sheet,.form-sheet-header,.quick-wa-panel,.private-link-box,.task-row) { background:#24261f; border-color:#454234; color:#eeeade; }
+.operations :is(h1,h2,h3,.event-card-top strong,.op-section-box label) { color:#eeeade; }
+.operations :is(.operations-header p,.no-events-hint,.event-card-meta,.sheet-folio,.wa-quick-templates > span,.private-link-box p,.event-dates-editor p,.op-history-body) { color:#b8b6aa; }
+.operations :is(.operations-eyebrow,.op-history-details summary) { color:#e6cca0; }
+.operations :is(.op-section-box,.op-history-details,.request-origin) { border-color:#454234; }
+.operations :is(input,select,textarea,.btn-call-touch,.template-chip) { background:#191b16; color:#eeeade !important; border:1px solid #665b40; font:inherit; padding:10px 12px; border-radius:6px; min-height:44px; max-width:100%; }
+.operations :is(.admin-primary,.btn-whatsapp-prominent,.template-chip:hover) { background:#d1b77e; color:#191b16 !important; border-color:#d1b77e; box-shadow:none; }
+.operations .admin-secondary { background:transparent; color:#e6cca0; border-color:#665b40; }
+.operations .event-card.selected,.operations .event-card:hover { border-color:#d1b77e; background:#2b2d23; }
+.operations .operations-fields > *, .operations .operations-layout > * { min-width:0; }
+.operations :focus-visible { outline:2px solid #e6cca0; outline-offset:3px; }
+.operations .request-origin p { overflow-wrap:anywhere; white-space:pre-wrap; }
+.operations :is(.task-check input,.verified-check input) { min-height:18px; padding:0; }
+.operations .op-availability-warning { padding:16px; margin:16px; background:#332b1d; border:1px solid #8a7242; border-radius:8px; color:#f1dfb8; line-height:1.6; }
+.operations .availability-grid .day-hold { background:#5b4825; }
+.operations .availability-grid .day-confirmed { background:#64382e; opacity:1; }
+.operations .availability-grid .day-blocked { background:#474940; opacity:1; text-decoration:line-through; }
+@media(max-width:600px) {
+  .operations :is(.op-section-box,.form-sheet-header,.request-origin,.quick-wa-panel,.op-save-actions,.private-link-box) { padding:20px 16px; }
+  .operations .event-card-top { flex-wrap:wrap; }
+}

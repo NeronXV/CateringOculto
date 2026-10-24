@@ -285,3 +285,7 @@
     padding: 12px !important;
   }
 }
+
+.chef-menu-card > summary { cursor:pointer; }
+.chef-menu-card > summary h2 { margin:0; }
+.chef-menu-card > summary span { font-size:0.8rem; }

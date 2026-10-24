@@ -4,6 +4,7 @@ import { database } from './db';
 import { LocalStore } from './localStore';
 import type { RowDataPacket } from 'mysql2/promise';
 import {runtimeEnv} from './runtime';
+import {verifyAvailabilitySchema} from './availabilitySchema';
 const pool = database(runtimeEnv());
 try {
   const command = process.argv[2];
@@ -13,11 +14,12 @@ try {
     const [lock] = await conn.query<RowDataPacket[]>("SELECT GET_LOCK('restauran_migrations',10) AS acquired");
     if (lock[0].acquired !== 1) throw new Error('Otra migración está en curso.');
     await conn.query('CREATE TABLE IF NOT EXISTS schema_migrations (version VARCHAR(80) PRIMARY KEY, applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB');
-    for (const version of ['001-foundation','002-quotes','003-inbox','004-two-roles','005-operations']) {
+    for (const version of ['001-foundation','002-quotes','003-inbox','004-two-roles','005-operations','006-event-dates','007-request-availability']) {
     const [versions] = await conn.query<RowDataPacket[]>('SELECT version FROM schema_migrations WHERE version=?',[version]);
     if (!versions.length) {
       const sql = readFileSync(resolve(`server/migrations/${version}.sql`),'utf8');
       for (const statement of sql.split(';').map(s=>s.trim()).filter(Boolean)) await conn.query(statement);
+      if(version==='007-request-availability')await verifyAvailabilitySchema(conn);
       await conn.execute('INSERT INTO schema_migrations (version) VALUES (?)',[version]);
     }
     }

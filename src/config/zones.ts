@@ -23,7 +23,7 @@ export const ZONES_CONFIG: ZoneOption[] = [
     description: 'Zona costera norte, marinas y residencias frente a la bahía.',
     travelFeeCents: 75000, // $750.00 MXN
     requiresConfirmation: false,
-    notes: 'Incluye traslado técnico de equipamiento a marina o villa.'
+    notes: 'Incluye traslado técnico de equipamiento a la marina o al lugar del evento.'
   },
   {
     id: 'todos-santos-pescadero',
@@ -36,7 +36,7 @@ export const ZONES_CONFIG: ZoneOption[] = [
   {
     id: 'otra-zona-bcs',
     name: 'Otra zona en Baja California Sur (Los Barriles, etc.)',
-    description: 'Villas o ranchos alejados. Sujeto a disponibilidad y viáticos según distancia.',
+    description: 'Casas o ranchos alejados. Sujeto a disponibilidad y viáticos según distancia.',
     travelFeeCents: 0,
     requiresConfirmation: true,
     notes: 'Traslado por confirmar. El costo logístico se evalúa de forma personalizada.'

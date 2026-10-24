@@ -3,11 +3,13 @@ import { Minus, Plus, Users } from 'lucide-react';
 import { ITINERARY_MAX_GUESTS } from '../../../types/itinerary';
 
 interface SimpleGuestCountProps {
+  embedded?: boolean;
   guestsCount: number;
   onChange: (value: number) => void;
 }
 
 export const SimpleGuestCount: React.FC<SimpleGuestCountProps> = ({
+  embedded = false,
   guestsCount,
   onChange
 }) => {
@@ -34,10 +36,10 @@ export const SimpleGuestCount: React.FC<SimpleGuestCountProps> = ({
   return (
     <div className="simple-guest-count">
       <div className="simple-step-header">
-        <span className="simple-step-tag">Paso 3</span>
+        {!embedded && <span className="simple-step-tag">Paso 1</span>}
         <h3 className="simple-step-title">¿Para cuántas personas?</h3>
         <p className="simple-step-desc">
-          Indica el número aproximado de invitados que disfrutarán de la experiencia culinaria.
+          Indica el número aproximado de invitados que recibirán el servicio.
         </p>
       </div>
 
@@ -84,7 +86,7 @@ export const SimpleGuestCount: React.FC<SimpleGuestCountProps> = ({
           <span>
             {guestsCount < 5
               ? 'Para grupos de menos de 5 personas, el chef confirma la viabilidad del montaje.'
-              : 'Atendemos con servicio personalizado en residencia, villa o terraza.'}
+              : 'Atendemos con servicio personalizado en tu casa o terraza.'}
           </span>
         </div>
       </div>

@@ -35,6 +35,17 @@ export function upgradeStoredCatalog(value: unknown): Catalog {
   if(!Object.prototype.hasOwnProperty.call(upgraded,'service'))upgraded.service=structuredClone(template.service);
   if(Array.isArray(upgraded.packages))upgraded.packages=upgraded.packages.map(p=>p && typeof p==='object'?{...p,choiceGroups:p.choiceGroups ?? [],priceApproved:p.priceApproved ?? true}:p);
   if(!Object.prototype.hasOwnProperty.call(upgraded,'sections')) upgraded.sections=structuredClone(template.sections);
+  else if(upgraded.sections && typeof upgraded.sections==='object' && !Array.isArray(upgraded.sections) && !Object.prototype.hasOwnProperty.call(upgraded.sections,'services')) {
+    upgraded.sections={...upgraded.sections,services:structuredClone(template.sections.services)};
+    // The simplified page previously ignored these two legacy defaults. Keep
+    // its visible wording on upgrade, while preserving any customized values.
+    if(upgraded.editorial && typeof upgraded.editorial==='object' && !Array.isArray(upgraded.editorial)) {
+      const editorial={...upgraded.editorial} as Record<string,unknown>;
+      if(editorial.description==='Cenas privadas y cocina de autor. Una experiencia que comienza en el producto y permanece en la memoria.')editorial.description=template.editorial.description;
+      if(editorial.buttonText==='Diseña tu experiencia')editorial.buttonText=template.editorial.buttonText;
+      upgraded.editorial=editorial;
+    }
+  }
   if(!Object.prototype.hasOwnProperty.call(upgraded,'rules')) upgraded.rules=structuredClone(template.rules);
   validateCatalog(upgraded);
   return upgraded;
@@ -97,6 +108,7 @@ export function validateCatalog(input: unknown): asserts input is Catalog {
   if(catalog.sections.philosophy.photos.length!==2 || catalog.sections.philosophy.pillars.length!==3)throw new Error('La composición de filosofía utiliza dos fotografías y tres principios.');
   if(catalog.sections.gallery.items.some(i=>!['portrait','landscape'].includes(i.aspect)))throw new Error('Formato de fotografía inválido.');
   unique(catalog.packages,'Menús');unique(catalog.extras,'Extras');unique(catalog.zones,'Zonas');unique(catalog.rules.leadTimes,'Anticipación');unique(catalog.sections.gallery.items,'Galería');
+  if(catalog.sections.services.items.map(s=>s.id).join(',')!=='desayuno,comida,cena')throw new Error('Conserva los tres servicios: desayuno, comida y cena.');
   if(!['zones','blocks'].includes(catalog.service.travelMode))throw new Error('Regla de traslado inválida.');
   if(catalog.sections.experiences.items.some(x=>!EVENT_TYPES.some(t=>t.id===x.id)))throw new Error('Experiencia inválida.');
   for(const extra of catalog.extras)if(!['per_person','per_unit','fixed'].includes(extra.pricingType) || !['maridaje','servicio','ambientacion','cocteleria'].includes(extra.category))throw new Error('Tipo de complemento inválido.');

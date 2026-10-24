@@ -34,7 +34,7 @@ export class QuoteStore {
       if(!rows.length)throw new Error('Catalog missing');
       const estimate=estimateQuote(parseState(rows[0].document).published,body.selection);
       if(estimate.version!==body.acceptedVersion)throw new QuoteError('El catálogo cambió. Revisa de nuevo el estimado antes de aceptarlo.',409);
-      const [occupied]=await conn.execute<RowDataPacket[]>("SELECT id FROM service_events WHERE event_date=? AND status IN ('confirmed','blocked')",[estimate.selection.eventDate]);
+      const [occupied]=await conn.execute<RowDataPacket[]>("SELECT e.id FROM service_events e JOIN service_event_dates d ON d.event_id=e.id WHERE d.service_date=? AND e.status IN ('confirmed','blocked')",[estimate.selection.eventDate]);
       if(occupied.length)throw new QuoteError('La fecha ya no está disponible. Elige otra fecha; tu solicitud aún no se ha guardado.',409);
       const id=randomUUID(),createdAt=new Date().toISOString();
       const folio=`CO-${createdAt.slice(0,10).replaceAll('-','')}-${id.replaceAll('-','').toUpperCase()}`;

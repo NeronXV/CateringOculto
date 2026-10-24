@@ -130,6 +130,10 @@ export async function authApp(pool: Pool, secret: string, mediaDirectory = resol
   });
   app.get('/inbox',async(req,res)=>res.json(await inbox.list(req.query)));
   app.get('/inbox/staff',async(_req,res)=>res.json(await inbox.staff()));
+  app.get('/inbox/settings',async(_req,res)=>res.json(await inbox.settings()));
+  app.post('/inbox/settings',async(req,res)=>res.json(await inbox.setSettings(req.body)));
+  app.post('/inbox/:id/availability',async(req,res)=>res.json(await inbox.decide(String(req.params.id),req.body,res.locals.user)));
+  app.post('/inbox/:id/link',async(req,res)=>{res.setHeader('Cache-Control','no-store');res.json(await inbox.issueLink(String(req.params.id),req.body,res.locals.user));});
   app.get('/inbox/:id',async(req,res)=>res.json(await inbox.detail(String(req.params.id))));
   app.post('/inbox/:id',async(req,res)=>res.json(await inbox.update(String(req.params.id),req.body,res.locals.user)));
   registerUsers(app,pool);
@@ -144,6 +148,7 @@ export async function authApp(pool: Pool, secret: string, mediaDirectory = resol
   for(const action of ['draft','publish','restore']) app.post(`/${action}`,async(req,res)=>{
     try {res.json(await store.update(action,req.body?.revision,req.body?.draft,res.locals.user.id));}
     catch(error){
+      if(error instanceof QuoteError)throw error;
       const message=error instanceof Error ? error.message : '';
       // Domain validation messages are safe; database diagnostics are not returned.
       if(message.startsWith('CONFLICT:'))res.status(409).json({error:message});

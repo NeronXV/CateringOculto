@@ -6,6 +6,8 @@ import { formatEventDate } from '../../../utils/formatters';
 import { itineraryWhatsAppMessage } from '../../../utils/receipt';
 import { BUSINESS_CONFIG } from '../../../config/business';
 import { Receipt } from '../Receipt';
+import { ItineraryAmounts } from '../ItineraryAmounts';
+import { visibleFolio } from '../../../utils/folio';
 
 interface SimpleReceiptViewProps {
   receipt: ItineraryReceipt;
@@ -26,7 +28,7 @@ export const SimpleReceiptView: React.FC<SimpleReceiptViewProps> = ({ receipt, o
         </div>
         <span className="receipt-eyebrow">Solicitud Registrada con Éxito</span>
         <h3 className="receipt-folio-display">
-          Folio: <strong>{receipt.folio}</strong>
+          Folio: <strong>{visibleFolio(receipt.folio)}</strong>
         </h3>
         <p className="receipt-success-subtitle">
           Tu solicitud fue guardada en la bandeja del equipo. Para agilizar la respuesta y afinar los platillos con el chef, continúa por WhatsApp.
@@ -34,11 +36,12 @@ export const SimpleReceiptView: React.FC<SimpleReceiptViewProps> = ({ receipt, o
       </div>
 
       <div className="receipt-summary-card">
-        <h4 className="receipt-card-title">Resumen de tu experiencia</h4>
+        <h4 className="receipt-card-title">Resumen de tu solicitud</h4>
+        <ItineraryAmounts estimate={estimate}/>
         <div className="receipt-card-meta">
           <span>👥 {estimate.selection.guestsCount} comensales</span>
           <span>📅 {estimate.summary.dayCount} días solicitados</span>
-          <span>🍽️ {estimate.summary.serviceCount} momentos gastronómicos</span>
+          <span>🍽️ {estimate.summary.serviceCount} servicios</span>
         </div>
 
         <div className="receipt-itinerary-list">

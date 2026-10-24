@@ -1,141 +1,36 @@
-import React from 'react';
-import { Calendar, Users, Send, AlertTriangle, ShieldCheck } from 'lucide-react';
-import type { ItinerarySelection, MealService, ServiceReference } from '../../../types/itinerary';
+import type { ItineraryEstimate } from '../../../types/itinerary';
 import { MEAL_LABELS } from '../../../types/itinerary';
 import { formatEventDate, formatMXNCents } from '../../../utils/formatters';
+import { ItineraryAmounts } from '../ItineraryAmounts';
 
-interface SimpleSummaryProps {
-  selection: ItinerarySelection;
-  contactName: string;
-  contactPhone: string;
-  contactNotes: string;
-  references: ServiceReference[];
-  busy: boolean;
-  error: string;
-  consent: boolean;
-  onConsentChange: (value: boolean) => void;
-  onSubmit: () => void;
-}
-
-export const SimpleSummary: React.FC<SimpleSummaryProps> = ({
-  selection,
-  contactName,
-  contactPhone,
-  contactNotes,
-  references,
-  busy,
-  error,
-  consent,
-  onConsentChange,
-  onSubmit
-}) => {
-  const serviceCount = selection.days.reduce((acc, d) => acc + d.services.length, 0);
-
-  // Group references by meal for clean display
-  const getPriceBadge = (service: MealService) => {
-    const ref = references.find(r => r.service === service);
-    if (ref && ref.status === 'approved' && ref.fromPerPersonCents) {
-      return `Desde ${formatMXNCents(ref.fromPerPersonCents)} / pers.`;
-    }
-    return 'Por confirmar con el chef';
-  };
-
-  return (
-    <div className="simple-summary-view">
-      <div className="simple-step-header">
-        <span className="simple-step-tag">Paso 5</span>
-        <h3 className="simple-step-title">Tu experiencia personalizada</h3>
-        <p className="simple-step-desc">
-          Revisa el itinerario antes de enviar tu solicitud. Generaremos un folio único para atenderte directamente.
-        </p>
-      </div>
-
-      <div className="summary-card-overview">
-        <div className="overview-header-row">
-          <div className="overview-item">
-            <Users size={16} className="overview-icon" />
-            <span className="overview-value">{selection.guestsCount} personas</span>
-          </div>
-          <div className="overview-item">
-            <Calendar size={16} className="overview-icon" />
-            <span className="overview-value">
-              {selection.days.length} {selection.days.length === 1 ? 'fecha' : 'fechas'} · {serviceCount} servicios
-            </span>
-          </div>
-        </div>
-
-        <div className="overview-itinerary-table">
-          <span className="overview-table-title">Itinerario por día</span>
-          {selection.days.map(d => (
-            <div key={d.date} className="overview-day-row">
-              <span className="overview-day-date">{formatEventDate(d.date)}</span>
-              <div className="overview-day-services">
-                {d.services.map(s => (
-                  <span key={s} className="overview-service-chip">
-                    <span className="service-name">{MEAL_LABELS[s]}</span>
-                    <span className="service-note">({getPriceBadge(s)})</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="overview-contact-block">
-          <span className="overview-table-title">Datos de contacto</span>
-          <p className="overview-contact-line">
-            <strong>{contactName}</strong> · WhatsApp: {contactPhone}
-          </p>
-          {contactNotes.trim() && (
-            <p className="overview-notes-line">
-              <em>Notas: {contactNotes.trim()}</em>
-            </p>
-          )}
-        </div>
-
-        <div className="overview-price-notice">
-          <div className="notice-inner">
-            <ShieldCheck size={18} className="notice-icon" />
-            <div>
-              <strong>Sin cargos inmediatos:</strong> El presupuesto final, logística de traslado y detalles de cada platillo se acuerdan personalmente con Carlos y Karen Ascencio. No se cobra nada en este sitio web.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {error && (
-        <div className="summary-error-banner" role="alert">
-          <AlertTriangle size={18} />
-          <span>{error}</span>
-        </div>
-      )}
-
-      <div className="summary-consent-block">
-        <label className="simple-consent-label">
-          <input
-            type="checkbox"
-            className="simple-checkbox"
-            checked={consent}
-            onChange={e => onConsentChange(e.target.checked)}
-            disabled={busy}
-          />
-          <span>
-            Autorizo guardar esta solicitud para que el equipo de Catering Oculto me contacte por WhatsApp. Entiendo que no reserva una fecha automáticamente.
-          </span>
-        </label>
-      </div>
-
-      <div className="summary-submit-actions">
-        <button
-          type="button"
-          className="btn-submit-itinerary"
-          disabled={busy || !consent}
-          onClick={onSubmit}
-        >
-          <Send size={18} />
-          <span>{busy ? 'Generando folio y registrando...' : 'Consultar disponibilidad'}</span>
-        </button>
-      </div>
+export function SimpleSummary({ estimate, onEdit }: { estimate: ItineraryEstimate; onEdit: (step: number) => void }) {
+  const pricing = estimate.pricing;
+  return <div className="simple-summary-view">
+    <div className="simple-step-header">
+      <span className="simple-step-tag">Paso 3</span>
+      <h3 className="simple-step-title">Tu estimado</h3>
+      <p className="simple-step-desc">{estimate.selection.guestsCount} personas · {estimate.summary.dayCount} fechas · {estimate.summary.serviceCount} servicios</p>
+      {estimate.selection.location && <p className="simple-step-desc">{estimate.selection.location}</p>}
     </div>
-  );
-};
+    <div className="summary-edit-actions" aria-label="Corregir selección">
+      <button type="button" className="simple-btn-prev" onClick={() => onEdit(1)}>Editar evento</button>
+      <button type="button" className="simple-btn-prev" onClick={() => onEdit(2)}>Editar servicios y menús</button>
+    </div>
+    {estimate.selection.days.map(day => <article className="simple-estimate-day" key={day.date}>
+      <h4>{formatEventDate(day.date)}</h4>
+      {day.services.map(service => {
+        const line = pricing?.lines.find(item => item.date === day.date && item.service === service);
+        return <div className="simple-estimate-service" key={service}>
+          <div className="simple-estimate-line">
+            <div><span className="simple-estimate-meal">{MEAL_LABELS[service]}{line && ` · ${line.requestedTime}`}</span><strong>{line?.menuName ?? MEAL_LABELS[service]}</strong></div>
+            <strong className="simple-estimate-amount">{line?.subtotalCents != null ? formatMXNCents(line.subtotalCents) : 'Precio por confirmar'}</strong>
+          </div>
+          {line?.perPersonCents != null && <p className="simple-menu-note">{estimate.selection.guestsCount} personas × {formatMXNCents(line.perPersonCents)} · antes de IVA</p>}
+          {line && <p className="simple-estimate-dishes">{line.dishes.length ? line.dishes.map(d => `${d.group}: ${d.name}`).join(' · ') : 'Platillos por acordar con el chef.'}</p>}
+        </div>;
+      })}
+    </article>)}
+    <ItineraryAmounts estimate={estimate}/>
+    <p className="simple-estimate-disclaimer">Estimado sujeto a confirmación de disponibilidad y propuesta final del chef.</p>
+  </div>;
+}

@@ -1,3 +1,4 @@
+import { mergeDraft } from './mergeDraft';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, Check, Globe, Plus, Save, Trash2, UtensilsCrossed } from 'lucide-react';
 import type { PackageMenu } from '../types';
@@ -36,6 +37,22 @@ export default function ChefMenus() {
 
   const dirty = !!state && JSON.stringify(draft) !== JSON.stringify(state.draft);
   const unpublished = !!state && JSON.stringify(state.draft) !== JSON.stringify(state.published);
+
+  const updateServices = (change: (services: Catalog['sections']['services']) => void) => {
+    setDraft(previous => {
+      if (!previous) return previous;
+      const copy = structuredClone(previous);
+      change(copy.sections.services);
+      return copy;
+    });
+    setMessage('');
+  };
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
 
   const updatePackage = (index: number, patch: Partial<PackageMenu>) => {
     if (!draft) return;
@@ -84,6 +101,18 @@ export default function ChefMenus() {
     });
   };
 
+  useEffect(()=>{
+    const refresh=(event:Event)=>{
+      const {source,state:incoming}=(event as CustomEvent<{source:string;state:EditorialState}>).detail;
+      if(source==='ChefMenus' || !state || !draft)return;
+      const merged=mergeDraft(state.draft,draft,incoming.draft);
+      if(!merged){setError('Otra sección cambió el mismo contenido. Tus cambios se conservan; revisa el borrador antes de volver a guardar.');return;}
+      setState(incoming);setDraft(merged);
+    };
+    window.addEventListener('catalog-updated',refresh);
+    return ()=>window.removeEventListener('catalog-updated',refresh);
+  },[state,draft]);
+
   const act = async (action: 'draft' | 'publish') => {
     if (!state || !draft) return;
     setBusy(true);
@@ -91,14 +120,16 @@ export default function ChefMenus() {
     setMessage('');
     setConfirmPublish(false);
     try {
-      if (action === 'draft') validateCatalog(draft);
+      const cleanDraft=structuredClone(draft);
+      if (action === 'draft') {cleanDraft.sections.services.items.forEach(s=>{s.includes=s.includes.map(v=>v.trim()).filter(Boolean);});validateCatalog(cleanDraft);}
       const result = await request(action, {
         revision: state.revision,
-        ...(action === 'draft' ? { draft } : {})
+        ...(action === 'draft' ? { draft:cleanDraft } : {})
       });
+      window.dispatchEvent(new CustomEvent('catalog-updated',{detail:{source:'ChefMenus',state:result}}));
       setState(result);
       setDraft(result.draft);
-      setMessage(action === 'draft' ? 'Cambios guardados en borrador.' : '¡Menús publicados en la página web con éxito!');
+      setMessage(action === 'draft' ? 'Cambios guardados en borrador.' : 'Contenido publicado. Recarga la página para ver los cambios.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar.');
     } finally {
@@ -107,7 +138,7 @@ export default function ChefMenus() {
   };
 
   if (!state || !draft) {
-    return <main className="chef-menus-main"><p role="status">Cargando menús de la cocina…</p></main>;
+    return <main className="chef-menus-main">{error?<p role="alert">{error}</p>:<p role="status">Cargando menús de la cocina…</p>}</main>;
   }
 
   return (
@@ -119,7 +150,7 @@ export default function ChefMenus() {
             <span>CATERING OCULTO · COCINA</span>
           </div>
           <h1>Menús de la cocina</h1>
-          <p>Edita tus propuestas gastronómicas, precios y platillos. Los cambios se guardan y tú decides cuándo publicarlos en la web.</p>
+          <p>Edita lo que el cliente ve en Desayuno, Comida y Cena. Guarda, revisa y publica cuando esté listo.</p>
         </div>
         <div className="chef-menus-status">
           <span className={`status-pill ${dirty ? 'dirty' : unpublished ? 'unpublished' : 'clean'}`}>
@@ -131,6 +162,30 @@ export default function ChefMenus() {
       {error && <div role="alert" className="admin-error">{error}</div>}
       {message && <div role="status" className="admin-success"><Check size={18} />{message}</div>}
 
+      <fieldset disabled={busy} style={{border:0,padding:0,margin:0,minWidth:0}}>
+      <section className="chef-menu-card" aria-label="Servicios de la página">
+        <div className="chef-menu-card-body">
+          <label className="chef-field">Título de la sección<input value={draft.sections.services.title} onChange={e=>updateServices(s=>{s.title=e.target.value;})}/></label>
+          <label className="chef-field">Presentación<textarea value={draft.sections.services.description} onChange={e=>updateServices(s=>{s.description=e.target.value;})}/></label>
+        </div>
+      </section>
+      <div className="chef-menus-cards">
+        {draft.sections.services.items.map((service,index)=><details className="chef-menu-card" key={service.id} name="public-services" open={index===0}>
+          <summary className="chef-menu-card-header"><h2>{service.title}</h2><span>Editar servicio</span></summary>
+          <div className="chef-menu-card-body chef-menu-fields-grid">
+            <label className="chef-field">Título<input value={service.title} onChange={e=>updateServices(s=>{s.items[index].title=e.target.value;})}/></label>
+            <label className="chef-field">Subtítulo<input value={service.subtitle} onChange={e=>updateServices(s=>{s.items[index].subtitle=e.target.value;})}/></label>
+            <label className="chef-field full-width">Descripción<textarea value={service.description} onChange={e=>updateServices(s=>{s.items[index].description=e.target.value;})}/></label>
+            <div className="chef-field full-width"><span>Fotografía que se ve en la página</span><ImageField id={'service-'+service.id} value={service.image} onChange={image=>updateServices(s=>{s.items[index].image=image;})}/></div>
+            <label className="chef-field full-width">{service.id==='desayuno'?'Incluido al centro de la mesa':'Sobre el servicio'} · un elemento por línea<textarea rows={5} value={service.includes.join('\n')} onChange={e=>updateServices(s=>{s.items[index].includes=e.target.value.split('\n');})}/></label>
+            <label className="chef-field full-width">Nota para el cliente<textarea value={service.note} onChange={e=>updateServices(s=>{s.items[index].note=e.target.value;})}/></label>
+          </div>
+        </details>)}
+      </div>
+      <details className="admin-history">
+        <summary>Precios de referencia y menús para acordar con el cliente</summary>
+        <p>Estos menús alimentan las referencias de precio de la solicitud. Sus fotografías y platillos no sustituyen las tres tarjetas de arriba. Las cenas de dos y tres tiempos se acuerdan después con el chef.</p>
+        <label className="chef-switch-label"><input type="checkbox" checked={draft.service.pricesApproved} onChange={e=>setDraft({...draft,service:{...draft.service,pricesApproved:e.target.checked}})}/>Precios revisados por el negocio: permitir referencias aprobadas</label>
       <div className="chef-menus-cards">
         {draft.packages.map((pkg: PackageMenu, idx: number) => {
           const priceMXN = pkg.pricePerPersonCents ? (pkg.pricePerPersonCents / 100) : 0;
@@ -148,7 +203,7 @@ export default function ChefMenus() {
                     checked={pkg.priceApproved !== false}
                     onChange={e => updatePackage(idx, { priceApproved: e.target.checked })}
                   />
-                  <span>{pkg.priceApproved !== false ? 'Precio visible' : 'Precio por confirmar'}</span>
+                  <span>{pkg.priceApproved !== false ? 'Precio aprobado' : 'Precio por confirmar'}</span>
                 </label>
               </div>
 
@@ -256,6 +311,8 @@ export default function ChefMenus() {
         })}
       </div>
 
+      </details>
+      </fieldset>
       {/* Floating Action Bar */}
       <footer className="chef-menus-footer-actions">
         <div className="footer-status-text">
@@ -293,7 +350,7 @@ export default function ChefMenus() {
       {confirmPublish && (
         <div className="admin-confirm" role="dialog" aria-label="Confirmar publicación">
           <h3>¿Publicar los cambios en la página web?</h3>
-          <p>Los visitantes del sitio verán inmediatamente los nombres, descripciones y precios actualizados.</p>
+          <p>Se publicará el borrador completo: servicios, contenido y referencias de precio. Revisa la vista previa antes de confirmar.</p>
           <button type="button" className="admin-primary" onClick={() => void act('publish')}>
             Confirmar publicación
           </button>

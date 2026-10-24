@@ -992,3 +992,57 @@
     align-items: flex-start;
   }
 }
+
+.summary-edit-actions { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; }
+.simple-breakfast-includes { margin:0 0 1.25rem; padding:1rem; border:1px solid var(--border-light); border-radius:var(--radius-md); background:var(--bg-subtle); }
+.simple-breakfast-includes h4 { margin:0 0 0.4rem; color:var(--accent-bronze-light); font-size:0.875rem; }
+.simple-breakfast-includes p { margin:0; color:var(--text-secondary); font-size:0.8125rem; line-height:1.7; overflow-wrap:anywhere; }
+.simple-step-body:focus-visible { outline:2px solid var(--color-gold, #c3ac7c); outline-offset:4px; }
+
+/* Only the selected meal moments expose menu controls. */
+.simple-service-menu { min-width:0; margin:1.25rem 0 0; padding:1rem 0 0; border:0; border-top:1px solid var(--border-light); }
+.simple-service-menu legend { padding:0 0.4rem 0 0; color:var(--accent-bronze); font-weight:600; }
+.simple-menu-field { display:flex; flex-direction:column; gap:0.5rem; margin:1rem 0; font-size:0.875rem; color:var(--text-primary); }
+.simple-menu-field input, .simple-menu-field select { box-sizing:border-box; width:100%; min-width:0; min-height:44px; padding:0.75rem; border:1px solid var(--border-medium); border-radius:var(--radius-sm); background:var(--bg-base); color:var(--text-primary); font:inherit; color-scheme:dark; }
+.simple-menu-field input:focus-visible, .simple-menu-field select:focus-visible, .simple-menu-option:focus-visible, .simple-menu-copy summary:focus-visible { outline:2px solid var(--accent-bronze); outline-offset:3px; }
+.simple-menu-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.6rem; margin:1rem 0; }
+.simple-menu-option { min-height:48px; padding:0.75rem; border:1px solid var(--border-medium); border-radius:var(--radius-sm); color:var(--text-secondary); background:var(--bg-base); display:flex; align-items:center; justify-content:space-between; gap:0.4rem; text-align:left; font:inherit; font-size:0.875rem; cursor:pointer; }
+.simple-menu-option.selected { border-color:var(--accent-bronze); color:var(--text-primary); }
+.simple-menu-heading { display:flex; align-items:flex-start; gap:0.9rem; margin:1rem 0; }
+.simple-menu-heading figure { flex:0 0 96px; margin:0; }
+.simple-menu-heading img { width:96px; height:76px; object-fit:cover; border-radius:var(--radius-sm); }
+.simple-menu-heading figcaption { font-size:0.65rem; color:var(--text-muted); line-height:1.4; margin-top:0.3rem; overflow-wrap:anywhere; }
+.simple-menu-heading > div { min-width:0; }
+.simple-menu-heading h5 { font-family:var(--font-serif); font-size:1.125rem; color:var(--text-primary); margin:0 0 0.4rem; }
+.simple-menu-heading p, .simple-dish-description { font-size:0.8125rem; color:var(--text-secondary); line-height:1.5; margin:0; }
+.simple-menu-price { display:block; margin-top:0.5rem; font-size:0.8125rem; color:var(--accent-bronze); }
+.simple-menu-note { margin:0; font-size:0.75rem; color:var(--text-muted); line-height:1.5; }
+.simple-menu-copy { border-top:1px solid var(--border-light); margin-top:1rem; padding-top:0.8rem; }
+.simple-menu-copy summary { font-size:0.8125rem; color:var(--accent-bronze); cursor:pointer; min-height:44px; }
+.simple-menu-copy button { margin-top:0.6rem; }
+.simple-menu-error { color:var(--color-error, #f2a799); font-size:0.8125rem; margin-top:0.75rem; }
+.simple-copy-notice { font-size:0.875rem; color:var(--accent-bronze); }
+.simple-summary-menu-line { display:block; width:100%; font-size:0.8125rem; color:var(--text-secondary); overflow-wrap:anywhere; }
+@media (max-width:380px) { .simple-menu-options { grid-template-columns:1fr; } .simple-menu-heading { flex-direction:column; } }
+
+.simple-event-location { display:flex; flex-direction:column; gap:0.7rem; margin-top:1.5rem; }
+.simple-guest-count { margin-top:1.75rem; }
+.simple-estimate-day { border:1px solid var(--border-light); border-radius:var(--radius-md); padding:1rem; margin-bottom:1rem; }
+.simple-estimate-day h4 { color:var(--accent-bronze); font-size:0.95rem; margin:0 0 0.5rem; text-transform:capitalize; }
+.simple-estimate-service { padding:0.85rem 0; border-top:1px solid var(--border-light); }
+.simple-estimate-line { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; }
+.simple-estimate-line > div { min-width:0; }
+.simple-estimate-line strong { display:block; font-size:0.95rem; color:var(--text-primary); }
+.simple-estimate-meal { display:block; color:var(--text-secondary); font-size:0.8rem; margin-bottom:0.3rem; }
+.simple-estimate-amount { flex:0 0 auto; max-width:45%; text-align:right; }
+.simple-estimate-dishes { font-size:0.8rem; color:var(--text-secondary); line-height:1.6; margin:0.5rem 0 0; overflow-wrap:anywhere; }
+.simple-estimate-total { padding:1.25rem; margin:1.5rem 0; border:1px solid var(--accent-bronze); border-radius:var(--radius-md); }
+.simple-estimate-total > span { color:var(--text-secondary); font-size:0.9rem; }
+.simple-estimate-total > strong { display:block; font-family:var(--font-serif); font-size:1.85rem; color:var(--accent-bronze); margin:0.4rem 0; }
+.simple-estimate-total p, .simple-estimate-pending { font-size:0.85rem; line-height:1.6; color:var(--text-secondary); overflow-wrap:anywhere; }
+.simple-estimate-pending h4 { color:var(--text-primary); margin-bottom:0.4rem; }
+.simple-estimate-pending ul { padding-left:1.2rem; }
+.simple-estimate-disclaimer { margin:1.5rem 0 0; font-size:0.85rem; line-height:1.6; color:var(--accent-bronze); }
+.simple-estimate-total .simple-estimate-disclaimer { color:var(--accent-bronze); font-weight:600; }
+.simple-send-review { font-size:0.85rem; color:var(--text-secondary); margin-top:1.5rem; }
+@media (max-width:380px) { .simple-estimate-line { flex-direction:column; gap:0.3rem; } .simple-estimate-amount { max-width:none; text-align:left; } }

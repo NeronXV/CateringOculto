@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {visibleFolio} from '../src/utils/folio';
 import type { Pool } from 'mysql2/promise';
 type Request=(route:string,body?:unknown,cookie?:string,origin?:string)=>Promise<Response>;
 export async function testInbox(pool:Pool,request:Request,owner:string,editor:string,sales:string) {
@@ -26,10 +27,16 @@ export async function testInbox(pool:Pool,request:Request,owner:string,editor:st
   const saved=await Promise.all([request('/inbox/'+id,change,owner),request('/inbox/'+id,change,sales)]);
   assert.deepEqual(saved.map(r=>r.status).sort(),[200,409]);
   const after=await (await request('/inbox/'+id,undefined,sales)).json();
+  const ordered=await (await request('/inbox',undefined,owner)).json();
+  assert.equal(ordered.items[0].followup.status,'nueva');assert.equal(ordered.items[1].followup.status,'en_revision');
   assert.equal(after.followup.revision,1);assert.equal(after.activity.length,1);assert.equal(after.activity[0].change.note,change.note);
   assert.deepEqual(after.estimate,detail.estimate);assert.deepEqual(after.contact,detail.contact);
   assert.equal((await (await request('/inbox?status=en_revision',undefined,owner)).json()).total,1);
   assert.equal((await (await request('/inbox?q='+encodeURIComponent(detail.folio),undefined,owner)).json()).total,1);
+  const short=visibleFolio(detail.folio);
+  const byShort=await (await request('/inbox?q='+encodeURIComponent(short),undefined,owner)).json();
+  assert.equal(byShort.total,1);assert.equal(byShort.items[0].id,id);assert.equal(byShort.items[0].folio,detail.folio);
+  assert.equal((await request('/inbox?q='+encodeURIComponent(short))).status,401);
   assert.equal((await (await request('/inbox?q=Persona',undefined,owner)).json()).total,2);
   assert.equal((await (await request('/inbox?q=%25',undefined,owner)).json()).total,0);
   assert.equal((await request('/inbox?page=-1',undefined,owner)).status,400);

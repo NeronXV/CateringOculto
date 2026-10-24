@@ -9,8 +9,38 @@ export const MEAL_LABELS: Record<MealService, string> = { desayuno: 'Desayuno', 
 export const ITINERARY_MAX_DAYS = 31;
 export const ITINERARY_MAX_GUESTS = 150;
 
-export interface ItineraryDay { date: string; services: MealService[]; }
-export interface ItinerarySelection { guestsCount: number; days: ItineraryDay[]; }
+export interface ServiceMenuSelection {
+  menuId: string;
+  requestedTime: string;
+  selectedDishes: Record<string, string>;
+}
+// Optional for historical itineraries, which only recorded meal moments.
+export interface ItineraryDay {
+  date: string;
+  services: MealService[];
+  selections?: Partial<Record<MealService, ServiceMenuSelection>>;
+}
+export interface ItinerarySelection { guestsCount: number; days: ItineraryDay[]; location?: string; }
+
+export interface ItineraryPriceLine {
+  date: string;
+  service: MealService;
+  menuId: string;
+  menuName: string;
+  requestedTime: string;
+  dishes: Array<{ group: string; name: string; description: string }>;
+  perPersonCents: number | null;
+  subtotalCents: number | null;
+}
+export interface ItineraryPricing {
+  lines: ItineraryPriceLine[];
+  menuSubtotalCents: number | null;
+  taxCents: number | null;
+  knownAmountCents: number | null;
+  totalCents: null;
+  travelStatus: 'pending';
+  extrasStatus: 'not_selected';
+}
 
 // Reference price per meal moment. Never a total; null means "por confirmar".
 export interface ServiceReference {
@@ -22,7 +52,7 @@ export interface ServiceReference {
 
 export interface ItineraryEstimate {
   kind: 'itinerary';
-  engineVersion: 'itinerary-v1';
+  engineVersion: 'itinerary-v1' | 'itinerary-v2' | 'itinerary-v3';
   catalogVersion: string;
   selection: ItinerarySelection;
   summary: { startDate: string; endDate: string; dayCount: number; serviceCount: number };
@@ -31,6 +61,7 @@ export interface ItineraryEstimate {
   taxPending: boolean;
   pending: string[];
   serviceSnapshot: ServiceSettings;
+  pricing?: ItineraryPricing;
   version: string;
 }
 

@@ -11,6 +11,11 @@
     "server:owner": "node server-dist/owner.js",
     "docker:prepare": "node scripts/prepare-docker.mjs",
     "preview": "vite preview",
+    "preview:quote": "node --import tsx scripts/preview-quote.mjs",
+    "preview:admin": "node --import tsx scripts/preview-admin.mjs",
+    "test:requests": "tsx tests/requestSummary.ts",
+    "test:ui:admin": "node --import tsx tests/adminPreview.mjs",
+    "test:ui:availability": "node --import tsx tests/availability-ui.mjs",
     "test": "node tests/regression.cjs && node tests/editorial.cjs",
     "local:prepare": "node scripts/prepare-local.mjs",
     "local:start": "node scripts/start-local.mjs",
@@ -23,7 +28,12 @@
     "typecheck:server": "tsc --noEmit --module esnext --moduleResolution bundler --target es2022 --esModuleInterop --skipLibCheck server/authApp.ts server/localAdmin.ts server/manage.ts server/start.ts server/owner.ts",
     "db:native": "node scripts/native-db.mjs",
     "db:native:stop": "node scripts/native-db.mjs stop",
-    "test:mysql": "node scripts/test-mysql.mjs"
+    "test:mysql": "node scripts/test-mysql.mjs",
+    "test:mysql:isolated": "node scripts/test-mysql-isolated.mjs",
+    "test:migration:isolated": "node scripts/test-mysql-isolated.mjs tests/migration007.ts",
+    "test:e2e:isolated": "node scripts/test-mysql-isolated.mjs tests/fullJourney.mjs",
+    "test:itinerary": "tsx tests/itinerary.ts && tsx tests/itineraryMenus.ts && tsx tests/itineraryPricing.ts",
+    "test:ui:simple": "node --import tsx tests/simple-flow-ui.mjs"
   },
   "dependencies": {
     "argon2": "^0.45.1",
@@ -34,7 +44,7 @@
     "mysql2": "^3.24.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sharp": "^0.35.4"
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

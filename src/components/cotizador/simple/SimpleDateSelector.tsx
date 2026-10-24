@@ -4,18 +4,20 @@ import { getTodayMinDateString, formatEventDate } from '../../../utils/formatter
 import { SERVER_ENABLED } from '../../../config/runtime';
 
 interface SimpleDateSelectorProps {
+  embedded?: boolean;
   selectedDates: string[];
   onToggleDate: (date: string) => void;
   onClearDate: (date: string) => void;
 }
 
 export const SimpleDateSelector: React.FC<SimpleDateSelectorProps> = ({
+  embedded = false,
   selectedDates,
   onToggleDate,
   onClearDate
 }) => {
   const minDate = getTodayMinDateString();
-  const [currentMonth, setCurrentMonth] = useState(() => minDate.slice(0, 7));
+  const [currentMonth, setCurrentMonth] = useState(() => (selectedDates[0] || minDate).slice(0, 7));
   const [availability, setAvailability] = useState<Record<string, string> | null>(null);
 
   useEffect(() => {
@@ -63,13 +65,13 @@ export const SimpleDateSelector: React.FC<SimpleDateSelectorProps> = ({
 
   return (
     <div className="simple-date-selector">
-      <div className="simple-step-header">
+      {!embedded && <div className="simple-step-header">
         <span className="simple-step-tag">Paso 1</span>
         <h3 className="simple-step-title">¿Cuándo te gustaría que cocinemos para ti?</h3>
         <p className="simple-step-desc">
           Toca una o varias fechas en el calendario. Puedes elegir días sueltos o estancias completas.
         </p>
-      </div>
+      </div>}
 
       <div className="simple-calendar-card">
         <div className="simple-calendar-nav">

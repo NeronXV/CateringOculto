@@ -15,10 +15,10 @@ export const Gallery: React.FC = () => {
             <span>Galería</span>
           </div>
           <h2 id="galeria-heading" className="section-title">
-            Platos, preparaciones y momentos
+            {SECTIONS_CONFIG.gallery.title}
           </h2>
           <p className="section-description">
-            Un vistazo a nuestros montajes de mesa, técnica en cocina y presentación de platillos en residencia.
+            {SECTIONS_CONFIG.gallery.description}
           </p>
         </div>
 

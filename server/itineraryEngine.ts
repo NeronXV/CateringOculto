@@ -11,6 +11,51 @@ import {
   type ServiceReference
 } from '../src/types/itinerary';
 import { digest, exactKeys, object, QuoteError, textField } from './quoteEngine';
+import { menusForService, selectionIssue } from '../src/utils/itineraryMenus';
+import type { ItineraryPricing, ServiceMenuSelection } from '../src/types/itinerary';
+import { servicePricing } from '../src/utils/servicePricing';
+import { activeDishGroups } from '../src/utils/dishes';
+import type { CalculationBreakdown } from '../src/types';
+
+function priceItinerary(catalog: Catalog, days: ItineraryDay[], guests: number): ItineraryPricing {
+  const settings = { ...catalog.service, travelMode: 'zones' as const };
+  const base = (menuSubtotalCents: number): CalculationBreakdown => ({
+    menuSubtotalCents, extrasSubtotalCents: 0, travelFeeCents: 0,
+    travelRequiresConfirmation: true, totalEstimatedCents: menuSubtotalCents,
+    extrasItemized: [], minGuestsWarning: false, selectedPackage: undefined, selectedZone: undefined
+  });
+  const lines = days.flatMap(day => day.services.map(service => {
+    const selection = day.selections![service]!;
+    const menu = catalog.packages.find(p => p.id === selection.menuId)!;
+    if (!Number.isSafeInteger(menu.pricePerPersonCents) || menu.pricePerPersonCents < 0) throw new QuoteError('El catálogo contiene importes inválidos.');
+    const approved = catalog.service.pricesApproved && menu.priceApproved !== false && menu.pricePerPersonCents > 0;
+    const menuBase = approved ? guests * menu.pricePerPersonCents : 0;
+    if (!Number.isSafeInteger(menuBase) || menuBase < 0) throw new QuoteError('Importe fuera de rango.');
+    // Reuse the price engine. Tax is rounded once on the aggregate below;
+    // travel remains unknown until a multi-day rule/location is agreed.
+    const calculated = servicePricing({ ...base(menuBase), selectedPackage: { ...menu, priceApproved: approved } }, guests, { ...settings, taxApproved: false });
+    return {
+      date: day.date, service, menuId: menu.id, menuName: menu.name, requestedTime: selection.requestedTime,
+      dishes: activeDishGroups(menu, selection.selectedDishes).flatMap(group => {
+        const option = group.options.find(o => o.id === selection.selectedDishes[group.id]);
+        return option ? [{ group: group.name, name: option.name, description: option.description }] : [];
+      }),
+      perPersonCents: approved ? menu.pricePerPersonCents : null,
+      subtotalCents: approved ? calculated.menuSubtotalCents : null
+    };
+  }));
+  const known = lines.filter(line => line.subtotalCents !== null);
+  const subtotal = known.reduce((sum, line) => sum + line.subtotalCents!, 0);
+  if (!Number.isSafeInteger(subtotal) || subtotal < 0) throw new QuoteError('Importe fuera de rango.');
+  const calculated = servicePricing(base(subtotal), guests, settings);
+  if (!Number.isSafeInteger(calculated.totalEstimatedCents) || calculated.totalEstimatedCents < 0) throw new QuoteError('Importe fuera de rango.');
+  return {
+    lines, menuSubtotalCents: known.length ? subtotal : null,
+    taxCents: known.length && settings.taxApproved ? calculated.taxCents! : null,
+    knownAmountCents: known.length ? calculated.totalEstimatedCents : null,
+    totalCents: null, travelStatus: 'pending', extrasStatus: 'not_selected'
+  };
+}
 
 function todayInBusinessTz(now: Date): string {
   const parts = new Intl.DateTimeFormat('en-CA', {
@@ -32,7 +77,8 @@ function isValidIsoDate(date: string): boolean {
 
 export function estimateItinerary(catalog: Catalog, input: unknown, now = new Date()): ItineraryEstimate {
   const data = object(input);
-  exactKeys(data, ['guestsCount', 'days']);
+  exactKeys(data, ['guestsCount', 'days', ...('location' in data ? ['location'] : [])]);
+  const location = 'location' in data ? textField(data.location, 500) : undefined;
 
   const guests = data.guestsCount;
   if (typeof guests !== 'number' || !Number.isSafeInteger(guests) || guests < 1 || guests > ITINERARY_MAX_GUESTS) {
@@ -49,7 +95,7 @@ export function estimateItinerary(catalog: Catalog, input: unknown, now = new Da
 
   for (const rawDay of data.days) {
     const dayObj = object(rawDay);
-    exactKeys(dayObj, ['date', 'services']);
+    exactKeys(dayObj, ['date', 'services', ...('selections' in dayObj ? ['selections'] : [])]);
 
     const date = dayObj.date;
     if (typeof date !== 'string' || !isValidIsoDate(date) || date <= todayStr) {
@@ -81,7 +127,30 @@ export function estimateItinerary(catalog: Catalog, input: unknown, now = new Da
 
     // Preserve clean ordering: desayuno -> comida -> cena
     dayServices.sort((a, b) => MEAL_SERVICES.indexOf(a) - MEAL_SERVICES.indexOf(b));
-    validatedDays.push({ date, services: dayServices });
+    let selections: ItineraryDay['selections'];
+    if ('selections' in dayObj) {
+      const rawSelections = object(dayObj.selections);
+      exactKeys(rawSelections, [...dayServices]);
+      selections = {};
+      for (const service of dayServices) {
+        const raw = object(rawSelections[service]);
+        exactKeys(raw, ['menuId', 'requestedTime', 'selectedDishes']);
+        if (typeof raw.menuId !== 'string' || typeof raw.requestedTime !== 'string') throw new QuoteError('Revisa el menú y horario del servicio.');
+        const dishes = object(raw.selectedDishes);
+        if (Object.values(dishes).some(value => typeof value !== 'string')) throw new QuoteError('Revisa los platillos y variantes del servicio.');
+        const selection: ServiceMenuSelection = {
+          menuId: raw.menuId,
+          requestedTime: raw.requestedTime,
+          selectedDishes: Object.fromEntries(Object.entries(dishes).sort(([a], [b]) => a.localeCompare(b))) as Record<string, string>
+        };
+        const issue = selectionIssue(catalog.packages, service, selection);
+        if (issue) throw new QuoteError(`${date} · ${service}: ${issue}`);
+        const menu = catalog.packages.find(p => p.id === selection.menuId)!;
+        if (guests > (menu.maxGuests ?? ITINERARY_MAX_GUESTS)) throw new QuoteError('El número de invitados supera el límite de este menú.');
+        selections[service] = selection;
+      }
+    }
+    validatedDays.push({ date, services: dayServices, ...(selections ? { selections } : {}) });
   }
 
   // Sort days chronologically
@@ -92,17 +161,7 @@ export function estimateItinerary(catalog: Catalog, input: unknown, now = new Da
   const references: ServiceReference[] = [];
 
   for (const meal of MEAL_SERVICES) {
-    let matchedPackages = packages.filter(p => {
-      if (meal === 'desayuno') return p.id === 'desayunos' || p.id.startsWith('desayun');
-      if (meal === 'comida') return p.id === 'lunch' || p.id.includes('comida');
-      if (meal === 'cena') return p.id.startsWith('cena');
-      return false;
-    });
-
-    if (matchedPackages.length === 0) {
-      // Fallback if catalog has different IDs
-      matchedPackages = packages.filter(p => p.name.toLowerCase().includes(meal));
-    }
+    const matchedPackages = menusForService(packages, meal);
 
     const anyPending = matchedPackages.some(p => p.priceApproved === false || p.pricePerPersonCents <= 0);
     const allApproved = matchedPackages.length > 0 && !anyPending && catalog.service.pricesApproved;
@@ -127,14 +186,15 @@ export function estimateItinerary(catalog: Catalog, input: unknown, now = new Da
   const startDate = validatedDays[0].date;
   const endDate = validatedDays[validatedDays.length - 1].date;
   const serviceCount = validatedDays.reduce((acc, d) => acc + d.services.length, 0);
+  const pricing = validatedDays.every(day => day.selections) ? priceItinerary(catalog, validatedDays, guests) : undefined;
 
   const pending: string[] = [
     'Disponibilidad tentativa sujeta a confirmación directa con el equipo.',
     'La ubicación y logística de traslado se acordarán directamente según la locación del evento.'
   ];
 
-  if (!catalog.service.pricesApproved || references.some(r => r.status === 'pending')) {
-    pending.push('Precios de cena y ajustes de propuesta por confirmar con el chef.');
+  if (!catalog.service.pricesApproved || (pricing ? pricing.lines.some(line => line.subtotalCents === null) : references.some(r => r.status === 'pending'))) {
+    pending.push(pricing ? 'Servicios con precio pendiente: no incluidos en el subtotal conocido.' : 'Precios de cena y ajustes de propuesta por confirmar con el chef.');
   }
 
   if (!catalog.service.taxApproved) {
@@ -143,12 +203,13 @@ export function estimateItinerary(catalog: Catalog, input: unknown, now = new Da
 
   const selection: ItinerarySelection = {
     guestsCount: guests,
-    days: validatedDays
+    days: validatedDays,
+    ...(location !== undefined ? { location } : {})
   };
 
   const snapshot = {
     kind: 'itinerary' as const,
-    engineVersion: 'itinerary-v1' as const,
+    engineVersion: pricing ? 'itinerary-v3' as const : validatedDays.some(d => d.selections) ? 'itinerary-v2' as const : 'itinerary-v1' as const,
     catalogVersion: digest(catalog),
     selection,
     summary: {
@@ -161,7 +222,8 @@ export function estimateItinerary(catalog: Catalog, input: unknown, now = new Da
     zoneStatus: 'pending' as const,
     taxPending: !catalog.service.taxApproved,
     pending,
-    serviceSnapshot: structuredClone(catalog.service)
+    serviceSnapshot: structuredClone(catalog.service),
+    ...(pricing ? { pricing } : {})
   };
 
   return {

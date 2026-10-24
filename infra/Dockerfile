@@ -1,4 +1,5 @@
-FROM node:24-bookworm-slim AS build
+ARG NODE_IMAGE=node:24-bookworm-slim
+FROM ${NODE_IMAGE} AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -9,7 +10,7 @@ COPY server ./server
 COPY scripts/build-server.mjs ./scripts/build-server.mjs
 RUN npm run build
 
-FROM node:24-bookworm-slim AS runtime
+FROM ${NODE_IMAGE} AS runtime
 ENV NODE_ENV=production PORT=3000 MEDIA_DIRECTORY=/app/media
 WORKDIR /app
 COPY package*.json ./

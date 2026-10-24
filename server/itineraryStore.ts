@@ -97,7 +97,7 @@ export class ItineraryStore {
       if (requestedDates.length > 0) {
         const placeholders = requestedDates.map(() => '?').join(',');
         const [occupied] = await conn.execute<RowDataPacket[]>(
-          `SELECT event_date FROM service_events WHERE event_date IN (${placeholders}) AND status IN ('confirmed','blocked')`,
+          `SELECT DATE_FORMAT(d.service_date,'%Y-%m-%d') AS event_date FROM service_events e JOIN service_event_dates d ON d.event_id=e.id WHERE d.service_date IN (${placeholders}) AND e.status IN ('confirmed','blocked')`,
           requestedDates
         );
 

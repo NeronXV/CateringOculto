@@ -37,6 +37,12 @@ export const App: React.FC = () => {
         {/* 2. Portada (Hero directo: Chef privado & catering en La Paz) */}
         <Hero onOpenCotizador={scrollToCotizador} />
 
+        {/* 4. Servicios Principales: Desayuno, Comida y Cena */}
+        <MainServices onSelectService={scrollToCotizador} />
+
+        {/* 5. Cómo Funciona: 4 pasos conversacionales */}
+        <HowItWorks onOpenCotizador={scrollToCotizador} />
+
         {/* 3. Solicitar Disponibilidad (SimpleQuote por defecto, legacy con ?legacy=1) */}
         {isLegacy ? (
           <CotizadorContainer
@@ -49,12 +55,6 @@ export const App: React.FC = () => {
         ) : (
           <SimpleQuote />
         )}
-
-        {/* 4. Servicios Principales: Desayuno, Comida y Cena */}
-        <MainServices onSelectService={scrollToCotizador} />
-
-        {/* 5. Cómo Funciona: 4 pasos conversacionales */}
-        <HowItWorks onOpenCotizador={scrollToCotizador} />
 
         {/* 6. Nuestra Cocina (Chef Carlos Zárate & Karen) */}
         <Philosophy />
